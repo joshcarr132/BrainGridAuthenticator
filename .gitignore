@@ -6,7 +6,7 @@ build
 
 # misc
 .DS_Store
-
+src/scripts/auth.js
 npm-debug.log
 yarn-error.log
 yarn.lock
