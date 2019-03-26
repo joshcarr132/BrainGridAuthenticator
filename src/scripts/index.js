@@ -17,6 +17,8 @@ import { Auth } from './auth';
 //         * remove indicator trail
 //         * remove end location indicator
 //         * remove all but the grid
+// TODO: move all snap and animation functions (including move commands) to their own file
+
 
 
 const WIDTH = 900;
@@ -29,7 +31,7 @@ const centerX = WIDTH / 2;
 const centerY = HEIGHT / 2;
 const lineColour = 'coral';
 
-const auth = new Auth();
+const auth = new Auth(); // probably not the best way to do this but it works
 const authObj = {
   username: auth.username,
   password: auth.password,
