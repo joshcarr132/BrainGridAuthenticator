@@ -6,12 +6,7 @@ import Snap from 'snapsvg-cjs';
 import { Auth } from './auth';
 /* eslint-disable no-console */
 
-//
-// TODO: bring in cortex and setup a keybinding to initiate  a command block
-//       then initiate movement based on block return value
-//         * cortex needs to live on the server, so http calls are needed
-//         * keypress -> HTTP call -> init command block on server -> animate based on
-//            return from server -> save data on server
+
 // TODO: create main menu interface that loads first, allows selecting profile,
 //       initiates loading grid interface for create or enter sessions
 // TODO: random path generation - function to create a randomized path through the
@@ -43,7 +38,6 @@ const authObj = {
   debit: auth.debit
 };
 
-// const authObj = [auth.username, auth.password, auth.client_id, auth.client_secret, auth.debit]
 
 let pathString;
 let path;
@@ -53,13 +47,6 @@ let currentNode;
 let s;
 let ignoringInput;
 let client;
-// initClient(authObj)
-//   .then((ctxClient) => {
-//     client = ctxClient;
-//     console.log('client: ' + client);
-//   })
-//   .then(() => { loadTrainingProfile(client); });
-
 
 
 const nodes = [];
