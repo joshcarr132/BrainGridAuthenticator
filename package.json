@@ -1,5 +1,5 @@
 {
-  "name": "BrainGrid Authentication",
+  "name": "BrainGridAuthentication",
   "version": "0.1.0",
   "description": "A prototype pattern-lock style authentication scheme for Emotiv BCIs.",
   "scripts": {
