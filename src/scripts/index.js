@@ -172,12 +172,11 @@ $(document).ready(() => { // eslint-disable-line
       console.log('client: ' + client);
     })
     .then(() => { loadTrainingProfile(client); });
-  // .then(() => {
 
   s = Snap('#svg'); // eslint-disable-line
   ignoringInput = false;
 
-  // render static grid and add coordinates to [nodes ]
+  // render static grid and add coordinates to [nodes]
   for (let i = 0; i <= 5; i++) {
     const row = [];
     for (let j = 0; j <= 5; j++) {
@@ -189,7 +188,6 @@ $(document).ready(() => { // eslint-disable-line
     }
     nodes.push(row);
   }
-  // });
 
   // render dynamic components
   redraw(s);

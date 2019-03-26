@@ -3,10 +3,6 @@ import { Cortex } from './cortex';
 Emotiv Command Authentication
  */
 
-// const Cortex = require("../lib/cortex");
-// const auth = require('../auth');
-
-// const verbose = global.process.env.LOG_LEVEL || 2;
 const verbose = 3;
 const dev = true;
 const options = { verbose, threshold: 0, dev };
@@ -40,11 +36,11 @@ export default function commandBlock(client, blockId = 1, blockTime = 8000) {
         const onCom = ev => {
           const data = com2obj(ev.com);
           client._log(data);
-          if (!blockData.commands.hasOwnProperty(data.act)) {             // check if command already stored
-            blockData.commands[data.act] = [1, data.pow];                   // if not, add it
+          if (!blockData.commands.hasOwnProperty(data.act)) {  // check if command already stored
+            blockData.commands[data.act] = [1, data.pow];          // if not, add it
           } else {
-            blockData.commands[data.act][0] += 1;                           // otherwise increment power by 1 and
-            blockData.commands[data.act][1] += data.pow;                    // total power by current command's power
+            blockData.commands[data.act][0] += 1;                  // otherwise increment power by 1 and
+            blockData.commands[data.act][1] += data.pow;           // total power by current command's power
           }
         };
 
@@ -54,7 +50,7 @@ export default function commandBlock(client, blockId = 1, blockTime = 8000) {
           client._log('Command block ended');
           client._log(blockData);
 
-          // determine command by total power
+          // determine command by total (cumulative) power
           let highestPower = [];
           for (let command in blockData.commands) {
             let power = blockData.commands[command][1];
@@ -136,17 +132,3 @@ const columns2obj = headers => cols => {
   }
   return obj;
 };
-
-// RUN APP
-// if (require.main === module) {
-//   // Initialize client
-//   const client = new Cortex(options);
-//   client.ready
-//     .then(() => client.init(auth))
-//     .then(() => loadTrainingProfile(client))
-//     // TODO: setup JSON database entry for password creation session with userId, training profile
-//     /*     TODO: wrapper for commandBlock which handles initializing blocks, 
-//                  providing feedback (e.g. "is [command] what you intended"),
-//                  pushing block data to database */
-//     .then(() => commandBlock(client));
-// }

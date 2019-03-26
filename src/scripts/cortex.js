@@ -1,23 +1,9 @@
 /*
- * JS Cortex Wrapper
- * *****************
- *
- * This library is intended to make working with Cortex easier in Javascript.
- * We use it both in the browser and NodeJS code.
- *
- * It makes extensive use of Promises for flow control; all requests return a
- * Promise with their result. 
- * 
- * For the subscription types in Cortex, we use an event emitter. Each kind of
- * event (mot, eeg, etc) is emitted as its own event that you can listen for
- * whether or not there are any active subscriptions at the time.
- *
- * The API methods are defined by using Cortex's inspectApi call. We mostly
- * just pass information back and forth without doing much with it, with the
- * exception of the login/auth flow, which we expose as the init() method.
- */
+  NodeJS wrapper for the Cortex API from Emotiv's example repository.
+  https://github.com/Emotiv/cortex-example 
+*/
 
-// const WebSocket = require("ws");
+
 const EventEmitter = require("events");
 
 const CORTEX_URL = "wss://emotivcortex.com:54321";
@@ -195,4 +181,3 @@ export class Cortex extends EventEmitter {
 
 Cortex.JSONRPCError = JSONRPCError;
 
-// module.exports = Cortex;
