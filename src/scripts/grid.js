@@ -1,25 +1,21 @@
 const WIDTH = 900;
 const HEIGHT = 900;
-const cellHeight = HEIGHT / 5;
-const cellWidth = WIDTH / 5;
-const vPadding = cellHeight / 2;
-const hPadding = cellWidth / 2;
-const centerX = WIDTH / 2;
-const centerY = HEIGHT / 2;
 const lineColour = 'coral';
 
 const delay = 200; // length of the animation
 
 
 export default class Grid {
-  constructor() {
+  constructor(width = WIDTH, height = HEIGHT, colour = lineColour) {
     // geometry
-    this.width = WIDTH;
-    this.height = HEIGHT;
+    this.width = width;
+    this.height = height;
+    this.lineColour = colour;
+
     this.cellWidth = this.width / 5;
     this.cellHeight = this.height / 5;
-    this.hPadding = cellWidth / 2;
-    this.vPadding = cellHeight / 2;
+    this.hPadding = this.cellWidth / 2;
+    this.vPadding = this.cellHeight / 2;
     this.centerX = this.width / 2;
     this.centerY = this.height / 2;
     this.delay = delay;
@@ -121,8 +117,8 @@ export default class Grid {
     for (let i = 0; i <= 5; i++) {
       const row = [];
       for (let j = 0; j <= 5; j++) {
-        const pointX = cellWidth * i + hPadding;
-        const pointY = cellHeight * j + vPadding;
+        const pointX = this.cellWidth * i + this.hPadding;
+        const pointY = this.cellHeight * j + this.vPadding;
         snap.circle(pointX, pointY, 10);
 
         row.push({ x: pointX, y: pointY });
@@ -148,18 +144,18 @@ export default class Grid {
     if (this.circle) { this.circle.remove(); }
 
     // initialize path before circle because snap doesn't support z-index
-    snap.circle(centerX, centerY, 10) // so the middle grid dot isnt visible
-      .attr({ fill: lineColour, stroke: lineColour });
+    snap.circle(this.centerX, this.centerY, 10) // so the middle grid dot isnt visible
+      .attr({ fill: this.lineColour, stroke: this.lineColour });
 
     this.path = snap.path(this.pathString)
-      .attr({ stroke: lineColour, fill: 'none', strokeWidth: 20 });
+      .attr({ stroke: this.lineColour, fill: 'none', strokeWidth: 20 });
 
     // circle indicator
     const node = this.getNode(2, 2);
     this.circle = snap.circle(node[0], node[1], 30)
       .attr({
-        fill: lineColour,
-        stroke: lineColour,
+        fill: this.lineColour,
+        stroke: this.lineColour,
         strokeOpacity: 0.3,
         strokeWidth: 10,
       });

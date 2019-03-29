@@ -15,5 +15,10 @@ module.exports = {
   rules: {
     'no-plusplus': 0,
     'no-console': 0,
+    'no-underscore-dangle': 0,
+    'max-len': 0,
+    'no-prototype-builtins': 0,
+    'import/prefer-default-export': 0,
   },
+
 };
