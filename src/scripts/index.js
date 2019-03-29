@@ -1,13 +1,9 @@
-// import commandBlock from './commandBlock';
-// import { initClient } from './commandBlock';
-// import { loadTrainingProfile } from './commandBlock';
 import $ from 'jquery';
 import Snap from 'snapsvg-cjs';
 import { commandBlock, initClient, loadTrainingProfile } from './commandBlock';
 import Grid from './grid';
 
 import { Auth } from './auth';
-/* eslint-disable no-console */
 
 
 // TODO: create main menu interface that loads first, allows selecting profile,

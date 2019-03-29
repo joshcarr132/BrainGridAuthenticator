@@ -1,6 +1,3 @@
-import Snap from 'snapsvg-cjs';
-
-
 const WIDTH = 900;
 const HEIGHT = 900;
 const cellHeight = HEIGHT / 5;
@@ -12,9 +9,6 @@ const centerY = HEIGHT / 2;
 const lineColour = 'coral';
 
 const delay = 200; // length of the animation
-
-let path;
-let circle;
 
 
 export default class Grid {
