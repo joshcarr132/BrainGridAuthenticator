@@ -8,7 +8,7 @@ const dev = true;
 const options = { verbose, threshold: 0, dev };
 
 
-export default function commandBlock(client, blockId = 1, blockTime = 8000) {
+export function commandBlock(client, blockId = 1, blockTime = 8000) {
   return new Promise((resolve, reject) => {
     let blockData = {
       blockId: blockId,
