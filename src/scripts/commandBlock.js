@@ -26,6 +26,7 @@ export function commandBlock(client, blockId = 1, blockTime = 8000) {
     };
     /* Commands are stored in the following stucture
          blockData= {
+           output: string--the command determined as the output for the entire block
            blockId: integer,
            commands: {
             command1: [eventCount, totalPower],

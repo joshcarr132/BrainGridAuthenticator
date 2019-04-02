@@ -106,7 +106,7 @@ export default class Grid {
     this.ignoringInput = true;
     window.setTimeout(() => {
       this.ignoringInput = false;
-    }, this.delay + 50);
+    }, this.delay + 50); // add a small extra delay to be sure the animation finishes
   }
 
   /* SETUP */
