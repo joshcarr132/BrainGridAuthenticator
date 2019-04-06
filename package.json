@@ -36,8 +36,10 @@
   },
   "dependencies": {
     "@babel/polyfill": "^7.0.0",
+    "express": "^4.16.4",
     "jquery": "^3.3.1",
     "snapsvg-cjs": "0.0.6",
+    "socket.io": "^2.2.0",
     "ws": "^6.2.0"
   }
 }

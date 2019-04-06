@@ -1,15 +1,7 @@
 import $ from 'jquery';
 import Snap from 'snapsvg-cjs';
-import { commandBlock, initClient, loadTrainingProfile } from './commandBlock';
-import Grid from './grid';
-
-import { Auth } from './auth';
-
-
-// TODO: create main menu interface that loads first, allows selecting profile,
-//       initiates loading grid interface for create or enter sessions
-// TODO: random path generation - function to create a randomized path through the
-//       grid that incorporates n node
+import io from 'socket.io';
+import { commandBlock, initClient, loadTrainingProfile node
 // TODO: variable feedback - allow different levels of visual feedback for practice
 //         * dim line that shows the path
 //         * no hint line but highlight end location
@@ -17,6 +9,7 @@ import { Auth } from './auth';
 //         * remove end location indicator
 //         * remove all but the grid
 
+const socket = io();
 
 const auth = new Auth(); // probably not the best way to do this but it works
 const authObj = {
@@ -98,8 +91,7 @@ $(document).keypress((e) => { // eslint-disable-line
               break;
           }
         });
-
-      break;
+     break;
 
     default:
       console.log(e.which);
