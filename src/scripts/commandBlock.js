@@ -1,4 +1,4 @@
-import { Cortex } from './cortex';
+const Cortex = require('./cortex.js');
 /*
 Emotiv Command Authentication
  */
@@ -18,7 +18,7 @@ const columns2obj = headers => (cols) => {
 };
 
 
-export function commandBlock(client, blockId = 1, blockTime = 8000) {
+function commandBlock(client, blockId = 1, blockTime = 8000) {
   return new Promise((resolve, reject) => {
     const blockData = {
       blockId,
@@ -81,7 +81,7 @@ export function commandBlock(client, blockId = 1, blockTime = 8000) {
   });
 }
 
-export function loadTrainingProfile(client) {
+function loadTrainingProfile(client) {
   // TODO: check of any profiles already loaded, allow to continue with existing profile or logout and select new
   // TODO: more robust error handling
   return new Promise((resolve, reject) => {
@@ -113,7 +113,7 @@ export function loadTrainingProfile(client) {
   });
 }
 
-export function initClient(auth) {
+function initClient(auth) {
   return new Promise((resolve) => {
     const client = new Cortex(options);
     client.ready
@@ -132,3 +132,5 @@ export function initClient(auth) {
       });
   });
 }
+
+module.exports = {commandBlock, initClient, loadTrainingProfile }

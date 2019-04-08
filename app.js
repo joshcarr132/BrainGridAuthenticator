@@ -5,6 +5,8 @@ const io = require('socket.io')(http);
 const path = require('path');
 
 app.use(express.static('src'));
+const commandBlock = require('./src/scripts/commandBlock.js');
+const Auth = require('./src/scripts/auth.js');
 
 app.get('/', (req, res) => {
     res.sendFile(path.resolve( __dirname + '/src/index.html' ));

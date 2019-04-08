@@ -6,6 +6,7 @@
 /* eslint-disable */
 
 const EventEmitter = require('events');
+const WebSocket = require('ws');
 
 const CORTEX_URL = 'wss://emotivcortex.com:54321';
 
@@ -34,7 +35,7 @@ class JSONRPCError extends Error {
   }
 }
 
-export class Cortex extends EventEmitter {
+class Cortex extends EventEmitter {
   constructor(options = {}) {
     super();
     this.options = options;
@@ -195,4 +196,5 @@ export class Cortex extends EventEmitter {
   }
 }
 
+module.exports = Cortex;
 Cortex.JSONRPCError = JSONRPCError;

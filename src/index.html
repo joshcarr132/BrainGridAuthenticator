@@ -5,8 +5,6 @@
   <meta charset="UTF-8">
   <title>BCI Grid Lock</title>
 
-  <script src="src/scripts/index.js"></script>
-  <script src="src/scripts/grid.js"></script>
 
   <style>
     #svg {
@@ -22,6 +20,13 @@
 
 <body>
   <svg id="svg"></svg>
+
+  <script src="./lib/socket.io-client.js"></script>
+  <script src="./lib/jquery.min.js"></script>
+  <script src="./lib/snap.svg.js"></script>
+
+  <script src="./scripts/index.js" type="module"></script>
+  <script src="./scripts/grid.js" type="module"></script>
 
 </body>
 

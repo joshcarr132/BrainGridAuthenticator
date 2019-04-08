@@ -1,13 +1,4 @@
-import $ from 'jquery';
-import Snap from 'snapsvg-cjs';
-import io from 'socket.io';
-import { commandBlock, initClient, loadTrainingProfile node
-// TODO: variable feedback - allow different levels of visual feedback for practice
-//         * dim line that shows the path
-//         * no hint line but highlight end location
-//         * remove indicator trail
-//         * remove end location indicator
-//         * remove all but the grid
+import Grid from './grid.js';
 
 const socket = io();
 
@@ -40,7 +31,6 @@ $(document).ready(() => { // eslint-disable-line
 
   grid.setup(s);
 });
-
 
 // HANDLE INPUTS
 $(document).keypress((e) => { // eslint-disable-line
