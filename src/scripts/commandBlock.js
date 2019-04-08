@@ -3,7 +3,7 @@ const Cortex = require('./cortex.js');
 Emotiv Command Authentication
  */
 
-const verbose = 3;
+const verbose = 2;
 const dev = true;
 const options = { verbose, threshold: 0, dev };
 
@@ -21,6 +21,7 @@ const columns2obj = headers => (cols) => {
 function commandBlock(client, blockId = 1, blockTime = 8000) {
   return new Promise((resolve, reject) => {
     const blockData = {
+      // output: '',
       blockId,
       commands: {}, // a log to store all command data from the block
     };
@@ -47,34 +48,37 @@ function commandBlock(client, blockId = 1, blockTime = 8000) {
         const onCom = (ev) => {
           const data = com2obj(ev.com);
           client._log(data);
-          // if (!blockData.commands.hasOwnProperty(data.act)) { // check if command already stored
-          if (Object.hasOwnProperty(blockData.commands, data.act)) {
+          if (!blockData.commands.hasOwnProperty(data.act)) { // check if command already stored
+            // if (!Object.hasOwnProperty(blockData.commands, data.act)) {
             blockData.commands[data.act] = [1, data.pow]; // if not, add it
           } else {
             blockData.commands[data.act][0] += 1; // otherwise increment power by 1 and
             blockData.commands[data.act][1] += data.pow; // total power by current command's power
           }
+          console.log(blockData);
         };
 
         client.on('com', onCom);
 
         setTimeout(() => { // once command block initialized, start timer which will end the block
           client._log('Command block ended');
-          client._log(blockData);
 
           // determine command by total (cumulative) power
           let highestPower = [];
-          // for (const command in blockData.commands) {
-          blockData.commands.forEach((command) => {
+
+          Object.keys(blockData.commands).forEach((command) => {
             const power = blockData.commands[command][1];
             if (!highestPower[0]) { highestPower = [command, power]; } else if (power > highestPower[1]) { highestPower = [command, power]; }
           });
+
+
           client._log(`Command: ${highestPower[0]}  |  power: ${highestPower[1]}`);
           blockData.output = [highestPower[0], highestPower[1]];
           // cleanup and close block
           client.unsubscribe({ streams: ['com'] })
             .then(() => client.updateSession({ status: 'close' }))
             .then(() => { client.removeListener('com', onCom); });
+          // client._log(blockData);
           resolve(blockData);
         }, blockTime);
       }).catch(err => client._warn(err));
@@ -133,4 +137,4 @@ function initClient(auth) {
   });
 }
 
-module.exports = {commandBlock, initClient, loadTrainingProfile }
+module.exports = { commandBlock, initClient, loadTrainingProfile }

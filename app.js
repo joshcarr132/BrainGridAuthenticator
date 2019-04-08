@@ -8,16 +8,20 @@ const commandBlock = require('./src/scripts/commandBlock.js');
 const Auth = require('./src/scripts/auth.js');
 
 
+
+let client;
+
+
 app.use('/', express.static(path.join(__dirname, '/src')));
 
 app.get('/', (req, res) => {
-  res.sendFile(path.resolve( __dirname + '/src/index.html' ));
+  res.sendFile(path.resolve(__dirname + '/src/index.html'));
 });
 
 io.on('connection', (socket) => {
   console.log('client connected');
   socket.on('disconnect', (socket) => {
-      console.log('client disconnected');
+    console.log('client disconnected');
   });
 
   socket.on('ready', () => {
@@ -26,8 +30,16 @@ io.on('connection', (socket) => {
         client = ctxClient;
         console.log(`client: ${ctxClient}`);
       })
-      .then(() => {commandBlock.loadTrainingProfile(client);});
+    // .then(() => { commandBlock.loadTrainingProfile(client); });
   });
+
+  socket.on('initCmdBlock', () => {
+    console.log('init command block');
+    commandBlock.commandBlock(client)
+      .then((data) => {
+        socket.emit('command', data.output);
+      })
+  })
 });
 
 

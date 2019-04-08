@@ -10,12 +10,6 @@ let grid;
 
 // SETUP
 $(document).ready(() => { // eslint-disable-line
-  // initClient(authObj)
-  //   .then((ctxClient) => {
-  //     client = ctxClient;
-  //     console.log(`client: ${client}`);
-  //   })
-  //   .then(() => { loadTrainingProfile(client); });
   socket.emit('ready');
 
   s = Snap('#svg'); // eslint-disable-line
@@ -50,30 +44,30 @@ $(document).keypress((e) => { // eslint-disable-line
 
     case 13: // enter
       grid.ignoringInput = true;
-      commandBlock(client)
-        .then((data) => {
-          const command = data.output[0];
-          // console.log('command' + command);
-          grid.ignoringInput = false;
-          switch (command) {
-            case 'left':
-              grid.moveLeft();
-              break;
-            case 'push':
-              grid.moveUp();
-              break;
-            case 'right':
-              grid.moveRight();
-              break;
-            case 'drop':
-              grid.moveDown();
-              break;
-            default:
-              console.log('no command detected');
-              break;
-          }
-        });
-     break;
+      socket.emit('initCmdBlock');
+
+      socket.on('command', (command) => {
+        console.log('OUTPUT COMMAND: ' + command)
+        grid.ignoringInput = false;
+        switch (command) {
+          case 'left':
+            grid.moveLeft();
+            break;
+          case 'push':
+            grid.moveUp();
+            break;
+          case 'right':
+            grid.moveRight();
+            break;
+          case 'drop':
+            grid.moveDown();
+            break;
+          default:
+            console.log('no command detected');
+            break;
+        }
+      });
+      break;
 
     default:
       console.log(e.which);
