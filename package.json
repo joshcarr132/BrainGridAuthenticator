@@ -4,7 +4,8 @@
   "description": "A prototype pattern-lock style authentication scheme for Emotiv BCIs.",
   "scripts": {
     "build": "webpack --config webpack/webpack.config.prod.js  --colors",
-    "start": "webpack-dev-server --inspect --open --config webpack/webpack.config.dev.js",
+    "start-webpack": "webpack-dev-server --inspect --open --config webpack/webpack.config.dev.js",
+    "start": "node ~/Dropbox/Code/BrainGridLock/src/app.js",
     "debug": "node-nightly --inspect-brk ./node_modules/webpack/bin/webpack.js"
   },
   "author": "JK Carr",
@@ -27,6 +28,7 @@
     "import-loader": "^1.0.1",
     "mini-css-extract-plugin": "^0.4.4",
     "node-sass": "^4.11.0",
+    "nodemon": "^1.18.10",
     "sass-loader": "^7.1.0",
     "style-loader": "^0.23.1",
     "webpack": "^4.21.0",
