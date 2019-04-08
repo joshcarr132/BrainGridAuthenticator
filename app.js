@@ -21,12 +21,12 @@ io.on('connection', (socket) => {
   });
 
   socket.on('ready', () => {
-    console.log('browser client ready');
     commandBlock.initClient(Auth)
       .then((ctxClient) => {
         client = ctxClient;
-        console.log(`client: ${ctxClient}`)
+        console.log(`client: ${ctxClient}`);
       })
+      .then(() => {commandBlock.loadTrainingProfile(client);});
   });
 });
 
