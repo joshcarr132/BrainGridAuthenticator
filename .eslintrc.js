@@ -19,6 +19,7 @@ module.exports = {
     'max-len': 0,
     'no-prototype-builtins': 0,
     'import/prefer-default-export': 0,
+    'linebreak-style': 0,
   },
 
 };
