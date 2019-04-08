@@ -2,15 +2,6 @@ import Grid from './grid.js';
 
 const socket = io();
 
-const auth = new Auth(); // probably not the best way to do this but it works
-const authObj = {
-  username: auth.username,
-  password: auth.password,
-  client_id: auth.client_id,
-  client_secret: auth.client_secret,
-  debit: auth.debit,
-};
-
 
 let s;
 let client;
@@ -19,12 +10,13 @@ let grid;
 
 // SETUP
 $(document).ready(() => { // eslint-disable-line
-  initClient(authObj)
-    .then((ctxClient) => {
-      client = ctxClient;
-      console.log(`client: ${client}`);
-    })
-    .then(() => { loadTrainingProfile(client); });
+  // initClient(authObj)
+  //   .then((ctxClient) => {
+  //     client = ctxClient;
+  //     console.log(`client: ${client}`);
+  //   })
+  //   .then(() => { loadTrainingProfile(client); });
+  socket.emit('ready');
 
   s = Snap('#svg'); // eslint-disable-line
   grid = new Grid();
