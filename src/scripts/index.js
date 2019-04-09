@@ -47,7 +47,7 @@ $(document).keypress((e) => { // eslint-disable-line
       socket.emit('initCmdBlock');
 
       socket.on('command', (command) => {
-        console.log('OUTPUT COMMAND: ' + command)
+        console.log('OUTPUT COMMAND: ' + command);
         grid.ignoringInput = false;
         switch (command) {
           case 'left':

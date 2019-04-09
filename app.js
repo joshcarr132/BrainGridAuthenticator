@@ -29,7 +29,7 @@ io.on('connection', (socket) => {
       .then((ctxClient) => {
         client = ctxClient;
         console.log(`client: ${ctxClient}`);
-      })
+      });
     // .then(() => { commandBlock.loadTrainingProfile(client); });
   });
 
@@ -37,9 +37,9 @@ io.on('connection', (socket) => {
     console.log('init command block');
     commandBlock.commandBlock(client)
       .then((data) => {
-        socket.emit('command', data.output);
-      })
-  })
+        socket.emit('command', data.output); // send command back to browser client
+      });
+  });
 });
 
 
