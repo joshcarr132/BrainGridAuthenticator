@@ -137,4 +137,4 @@ function initClient(auth) {
   });
 }
 
-module.exports = { commandBlock, initClient, loadTrainingProfile }
+module.exports = { commandBlock, initClient, loadTrainingProfile };

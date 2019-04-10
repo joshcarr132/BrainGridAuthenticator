@@ -1,10 +1,10 @@
-import Grid from './grid.js';
+import Grid from './grid';
 
-const socket = io();
+const socket = io(); // eslint-disable-line
 
 
-let s;
-let client;
+lsetss s;
+// let client;
 let grid;
 
 
@@ -42,14 +42,14 @@ $(document).keypress((e) => { // eslint-disable-line
       console.log('reinitializing...');
       break;
 
-    // TODO: create a 'backspace' function which removes the last issued movement command
+      // TODO: create a 'backspace' function which removes the last issued movement command
 
     case 13: // enter
       grid.ignoringInput = true;
       socket.emit('initCmdBlock');
 
       socket.on('command', (command) => {
-        console.log('OUTPUT COMMAND: ' + command);
+        console.log(`OUTPUT COMMAND: ${command}`);
         grid.ignoringInput = false;
         switch (command) {
           case 'left':
