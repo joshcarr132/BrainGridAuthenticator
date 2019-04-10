@@ -1,12 +1,12 @@
+const path = require('path');
 const express = require('express');
+
 const app = express();
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
-const path = require('path');
 
 const commandBlock = require('./src/scripts/commandBlock.js');
 const Auth = require('./src/scripts/auth.js');
-
 
 
 let client;
@@ -15,12 +15,12 @@ let client;
 app.use('/', express.static(path.join(__dirname, '/src')));
 
 app.get('/', (req, res) => {
-  res.sendFile(path.resolve(__dirname + '/src/index.html'));
+  res.sendFile(path.resolve(__dirname, '/src/index.html'));
 });
 
 io.on('connection', (socket) => {
   console.log('client connected');
-  socket.on('disconnect', (socket) => {
+  socket.on('disconnect', () => {
     console.log('client disconnected');
   });
 
