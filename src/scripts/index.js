@@ -42,6 +42,8 @@ $(document).keypress((e) => { // eslint-disable-line
       console.log('reinitializing...');
       break;
 
+    // TODO: create a 'backspace' function which removes the last issued movement command
+
     case 13: // enter
       grid.ignoringInput = true;
       socket.emit('initCmdBlock');
