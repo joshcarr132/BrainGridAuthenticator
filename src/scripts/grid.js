@@ -7,7 +7,7 @@ const DELAY = 200; // length of the animation
 export default class Grid {
   constructor(options) {
     // geometry
-    if (!options) options = {};
+    if (!options) options = {}; // eslint-disable-line no-param-reassign
 
     if (options.width) {
       this.width = options.width;

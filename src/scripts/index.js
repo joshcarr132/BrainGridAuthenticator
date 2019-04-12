@@ -1,4 +1,4 @@
-import Grid from "./grid.js"; // eslint-disable-line
+import Grid from './grid.js'; // eslint-disable-line import/extensions
 
 const socket = io(); // eslint-disable-line
 
@@ -6,17 +6,17 @@ let s;
 let grid;
 
 // SETUP
-$(document).ready(() => {// eslint-disable-line
+$(document).ready(() => { // eslint-disable-line no-undef
   socket.emit('ready');
 
-  s = Snap("#svg"); // eslint-disable-line
+  s = Snap('#svg'); // eslint-disable-line no-undef
   grid = new Grid({ startNode: [3, 3] });
 
   grid.setup(s);
 });
 
 // HANDLE INPUTS
-$(document).keypress((e) => {// eslint-disable-line
+$(document).keypress((e) => { // eslint-disable-line no-undef
   console.log(e.which);
   switch (e.which) {
     case 97: // left
