@@ -1,16 +1,33 @@
 const WIDTH = 900;
 const HEIGHT = 900;
-const lineColour = 'coral';
+const LINECOLOUR = 'coral';
 
-const delay = 200; // length of the animation
-const START = [2, 2];
+const DELAY = 200; // length of the animation
 
 export default class Grid {
-  constructor(width = WIDTH, height = HEIGHT, colour = lineColour) {
+  constructor(options) {
     // geometry
-    this.width = width;
-    this.height = height;
-    this.lineColour = colour;
+    if (!options) options = {};
+
+    if (options.width) {
+      this.width = options.width;
+    } else { this.width = WIDTH; }
+
+    if (options.height) {
+      this.height = options.height;
+    } else { this.height = HEIGHT; }
+
+    if (options.lineColour) {
+      this.lineColour = options.lineColour;
+    } else { this.lineColour = LINECOLOUR; }
+
+    if (options.delay) {
+      this.delay = options.delay;
+    } else { this.delay = DELAY; }
+
+    if (options.startNode) {
+      this.startNode = options.startNode;
+    } else { this.startNode = [2, 2]; }
 
     this.cellWidth = this.width / 5;
     this.cellHeight = this.height / 5;
