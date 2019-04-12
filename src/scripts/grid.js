@@ -35,7 +35,6 @@ export default class Grid {
     this.vPadding = this.cellHeight / 2;
     this.centerX = this.width / 2;
     this.centerY = this.height / 2;
-    this.delay = delay;
     this.ignoringInput = true;
 
     // svg objects
@@ -57,7 +56,7 @@ export default class Grid {
       this.circle.animate({ cx: newNode[0], cy: newNode[1] }, this.delay);
       this.pathString += `L${newNode[0]},${newNode[1]}`;
       this.currentNode[0] -= 1;
-      this.ignoreInput(delay);
+      this.ignoreInput(this.delay);
       this.path.animate({ d: this.pathString }, this.delay);
     } else { console.log('invalid position'); }
   }
@@ -69,7 +68,7 @@ export default class Grid {
       this.circle.animate({ cx: newNode[0], cy: newNode[1] }, this.delay);
       this.pathString += `L${newNode[0]},${newNode[1]}`;
       this.currentNode[1] -= 1;
-      this.ignoreInput(delay);
+      this.ignoreInput(this.delay);
       this.path.animate({ d: this.pathString }, this.delay);
     } else { console.log('invalid position'); }
   }
@@ -81,7 +80,7 @@ export default class Grid {
       this.circle.animate({ cx: newNode[0], cy: newNode[1] }, this.delay);
       this.pathString += `L${newNode[0]},${newNode[1]}`;
       this.currentNode[0] += 1;
-      this.ignoreInput(delay);
+      this.ignoreInput(this.delay);
       this.path.animate({ d: this.pathString }, this.delay);
     } else { console.log('invalid position'); }
   }
@@ -93,7 +92,7 @@ export default class Grid {
       this.circle.animate({ cx: newNode[0], cy: newNode[1] }, this.delay);
       this.pathString += `L${newNode[0]},${newNode[1]}`;
       this.currentNode[1] += 1;
-      this.ignoreInput(delay);
+      this.ignoreInput(this.delay);
       this.path.animate({ d: this.pathString }, this.delay);
     } else { console.log('invalid position'); }
   }
@@ -105,7 +104,7 @@ export default class Grid {
       const newNode = this.getNode(this.currentNode[0], this.currentNode[1]);
       this.circle.animate({ cx: newNode[0], cy: newNode[1] }, this.delay);
       this.pathString = this.pathString.substring(0, this.pathString.lastIndexOf('L'));
-      this.ignoreInput(delay);
+      this.ignoreInput(this.delay);
       this.path.animate({ d: this.pathString }, this.delay);
     } else if (this.visitedNodes.length < 2) {
       console.log('no moves to undo!');
