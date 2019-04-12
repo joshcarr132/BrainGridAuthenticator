@@ -3,7 +3,7 @@ const HEIGHT = 900;
 const lineColour = 'coral';
 
 const delay = 200; // length of the animation
-
+const START = [2, 2];
 
 export default class Grid {
   constructor(width = WIDTH, height = HEIGHT, colour = lineColour) {
@@ -36,6 +36,7 @@ export default class Grid {
   moveLeft() {
     if (this.isValidNode([this.currentNode[0] - 1, this.currentNode[1]]) && !this.ignoringInput) {
       const newNode = this.getNode(this.currentNode[0] - 1, this.currentNode[1]);
+      this.visitedNodes.push([...this.currentNode]);
       this.circle.animate({ cx: newNode[0], cy: newNode[1] }, this.delay);
       this.pathString += `L${newNode[0]},${newNode[1]}`;
       this.currentNode[0] -= 1;
@@ -47,6 +48,7 @@ export default class Grid {
   moveUp() {
     if (this.isValidNode([this.currentNode[0], this.currentNode[1] - 1]) && !this.ignoringInput) {
       const newNode = this.getNode(this.currentNode[0], this.currentNode[1] - 1);
+      this.visitedNodes.push([...this.currentNode]);
       this.circle.animate({ cx: newNode[0], cy: newNode[1] }, this.delay);
       this.pathString += `L${newNode[0]},${newNode[1]}`;
       this.currentNode[1] -= 1;
@@ -58,22 +60,24 @@ export default class Grid {
   moveRight() {
     if (this.isValidNode([this.currentNode[0] + 1, this.currentNode[1]]) && !this.ignoringInput) {
       const newNode = this.getNode(this.currentNode[0] + 1, this.currentNode[1]);
+      this.visitedNodes.push([...this.currentNode]);
       this.circle.animate({ cx: newNode[0], cy: newNode[1] }, this.delay);
       this.pathString += `L${newNode[0]},${newNode[1]}`;
       this.currentNode[0] += 1;
       this.ignoreInput(delay);
-      this.path.animate({ d: this.pathString }, delay);
+      this.path.animate({ d: this.pathString }, this.delay);
     } else { console.log('invalid position'); }
   }
 
   moveDown() {
     if (this.isValidNode([this.currentNode[0], this.currentNode[1] + 1]) && !this.ignoringInput) {
       const newNode = this.getNode(this.currentNode[0], this.currentNode[1] + 1);
+      this.visitedNodes.push([...this.currentNode]);
       this.circle.animate({ cx: newNode[0], cy: newNode[1] }, this.delay);
       this.pathString += `L${newNode[0]},${newNode[1]}`;
       this.currentNode[1] += 1;
       this.ignoreInput(delay);
-      this.path.animate({ d: this.pathString }, delay);
+      this.path.animate({ d: this.pathString }, this.delay);
     } else { console.log('invalid position'); }
   }
 
@@ -127,17 +131,21 @@ export default class Grid {
     }
 
     // render dynamic components
-    this.redraw(snap);
+    this.redraw(snap, START);
   }
 
-  redraw(snap) {
+  redraw(snap, start) {
     /* redraw is called once during setup to render the main circle indicator
       and initialize the path. It can be called again at any point to reset
-      the animation to its initial state. */
+      the animation to its initial state.
+
+      snap: the snap object
+      start: an array with 2 elements that specifies the start position (e.g., [2, 1])
+    */
 
     // reset to default values
-    this.visitedNodes = [[2, 2]];
-    this.currentNode = [2, 2];
+    this.currentNode = [...start];
+    this.visitedNodes.push([...this.currentNode]);
     this.pathString = `M${this.centerX},${this.centerY}`;
 
     if (this.path) { this.path.remove(); }
