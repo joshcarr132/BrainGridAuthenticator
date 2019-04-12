@@ -38,11 +38,13 @@ $(document).keypress((e) => { // eslint-disable-line
       break;
 
     case 32: // spacebar
-      grid.redraw(s);
+      grid.redraw(s, [2, 2]);
       console.log('reinitializing...');
       break;
 
-      // TODO: create a 'backspace' function which removes the last issued movement command
+    case 117: // u
+      grid.undo();
+      break;
 
     case 13: // enter
       grid.ignoringInput = true;
@@ -75,7 +77,4 @@ $(document).keypress((e) => { // eslint-disable-line
       console.log(e.which);
       break;
   }
-  // spread syntax seems unnecessary here but it mysteriously only works this way
-  grid.visitedNodes.push([...grid.currentNode]);
-  console.log(grid.currentNode);
 });
