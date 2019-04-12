@@ -11,7 +11,7 @@ $(document).ready(() => {// eslint-disable-line
   socket.emit('ready');
 
   s = Snap("#svg"); // eslint-disable-line
-  grid = new Grid();
+  grid = new Grid({ startNode: [3, 3] });
 
   grid.setup(s);
 });
@@ -37,7 +37,7 @@ $(document).keypress((e) => {// eslint-disable-line
       break;
 
     case 32: // spacebar
-      grid.redraw(s, [2, 2]);
+      grid.redraw(s);
       console.log('reinitializing...');
       break;
 

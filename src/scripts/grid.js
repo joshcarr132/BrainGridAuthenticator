@@ -161,10 +161,10 @@ export default class Grid {
     }
 
     // render dynamic components
-    this.redraw(snap, START);
+    this.redraw(snap, this.startNode);
   }
 
-  redraw(snap, start) {
+  redraw(snap, start = this.startNode) {
     /* redraw is called once during setup to render the main circle indicator
       and initialize the path. It can be called again at any point to reset
       the animation to its initial state.
@@ -176,21 +176,23 @@ export default class Grid {
     // reset to default values
     this.currentNode = [...start];
     this.visitedNodes.push([...this.currentNode]);
-    this.pathString = `M${this.centerX},${this.centerY}`;
+    const newNodePx = this.getNode(this.currentNode[0], this.currentNode[1]);
+
+    this.pathString = `M${newNodePx[0]},${newNodePx[1]}`;
+
 
     if (this.path) { this.path.remove(); }
     if (this.circle) { this.circle.remove(); }
 
     // initialize path before circle because snap doesn't support z-index
-    snap.circle(this.centerX, this.centerY, 10) // so the middle grid dot isnt visible
+    snap.circle(newNodePx[0], newNodePx[1], 10) // so the middle grid dot isnt visible
       .attr({ fill: this.lineColour, stroke: this.lineColour });
 
     this.path = snap.path(this.pathString)
       .attr({ stroke: this.lineColour, fill: 'none', strokeWidth: 20 });
 
     // circle indicator
-    const node = this.getNode(2, 2);
-    this.circle = snap.circle(node[0], node[1], 30)
+    this.circle = snap.circle(newNodePx[0], newNodePx[1], 30)
       .attr({
         fill: this.lineColour,
         stroke: this.lineColour,
