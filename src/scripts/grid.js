@@ -174,6 +174,7 @@ export default class Grid {
     */
 
     // reset to default values
+    this.visitedNodes = [];
     this.currentNode = [...start];
     this.visitedNodes.push([...this.currentNode]);
     const newNodePx = this.getNode(this.currentNode[0], this.currentNode[1]);

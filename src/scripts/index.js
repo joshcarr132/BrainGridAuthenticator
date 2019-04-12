@@ -3,7 +3,6 @@ import Grid from "./grid.js"; // eslint-disable-line
 const socket = io(); // eslint-disable-line
 
 let s;
-// let client;
 let grid;
 
 // SETUP
@@ -76,4 +75,5 @@ $(document).keypress((e) => {// eslint-disable-line
       console.log(e.which);
       break;
   }
+  console.log(grid.currentNode);
 });
