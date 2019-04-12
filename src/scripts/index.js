@@ -1,25 +1,24 @@
-import Grid from './grid';
+import Grid from "./grid.js"; // eslint-disable-line
 
 const socket = io(); // eslint-disable-line
 
-
-lsetss s;
+let s;
 // let client;
 let grid;
 
-
 // SETUP
-$(document).ready(() => { // eslint-disable-line
+$(document).ready(() => {// eslint-disable-line
   socket.emit('ready');
 
-  s = Snap('#svg'); // eslint-disable-line
+  s = Snap("#svg"); // eslint-disable-line
   grid = new Grid();
 
   grid.setup(s);
 });
 
 // HANDLE INPUTS
-$(document).keypress((e) => { // eslint-disable-line
+$(document).keypress((e) => {// eslint-disable-line
+  console.log(e.which);
   switch (e.which) {
     case 97: // left
       grid.moveLeft();
