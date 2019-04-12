@@ -81,6 +81,20 @@ export default class Grid {
     } else { console.log('invalid position'); }
   }
 
+  undo() {
+    // undo the last move
+    if (!this.ignoringInput && this.visitedNodes.length > 1) {
+      this.currentNode = this.visitedNodes.pop();
+      const newNode = this.getNode(this.currentNode[0], this.currentNode[1]);
+      this.circle.animate({ cx: newNode[0], cy: newNode[1] }, this.delay);
+      this.pathString = this.pathString.substring(0, this.pathString.lastIndexOf('L'));
+      this.ignoreInput(delay);
+      this.path.animate({ d: this.pathString }, this.delay);
+    } else if (this.visitedNodes.length < 2) {
+      console.log('no moves to undo!');
+    }
+  }
+
   /* HELPER FUNCTIONS */
   getNode(x, y) {
     /* Enter a grid location (e.g., [0,2]) to get the x and y pixel
