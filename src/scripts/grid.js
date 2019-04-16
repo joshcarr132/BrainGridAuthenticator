@@ -120,11 +120,12 @@ export default class Grid {
     return [nodeX, nodeY];
   }
 
-  isValidNode(coordinates) {
+  isValidNode(coordinates, exclude = undefined) {
     /* Called before any movement to determine if move is valid.
        Returns true if the destination node is a valid grid position
        (i.e., int between 0-4 for both x and y) AND the node has not
        previously been visited. */
+    if (exclude && exclude.includes(coordinates)) { return false; }
     if (coordinates[0] < 0 || coordinates[0] > 4) { return false; }
     if (coordinates[1] < 0 || coordinates[1] > 4) { return false; }
 
