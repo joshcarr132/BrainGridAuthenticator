@@ -42,6 +42,8 @@ export default class Grid {
     this.pathString = '';
     this.path = null;
     this.circle = null;
+    this.phantomCircle = null;
+    this.phantomPath = null;
 
     // grid
     this.nodes = [];
@@ -180,6 +182,16 @@ export default class Grid {
     */
 
     // reset to default values
+    if (this.phantomCircle) {
+      const newNodePx = this.getNode(this.phantomCircle[0], this.phantomCircle[1]);
+      snap.circle(newNodePx[0], newNodePx[1], 20)
+        .attr({ fill: 'grey', stroke: 'grey' });
+    }
+    if (this.phantomPath) {
+      snap.path(this.phantomPath)
+        .attr({ fill: 'none', stroke: 'grey', strokeWidth: 20 });
+    }
+
     this.visitedNodes = [];
     this.currentNode = [...start];
     this.visitedNodes.push([...this.currentNode]);
