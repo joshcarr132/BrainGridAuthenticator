@@ -22,22 +22,22 @@ io.on('connection', (socket) => {
     console.log('client disconnected');
   });
 
-  socket.on('ready', () => {
-    commandBlock.initClient(Auth)
-      .then((ctxClient) => {
-        client = ctxClient;
-        console.log(`client: ${ctxClient}`);
-      });
-    // .then(() => { commandBlock.loadTrainingProfile(client); });
-  });
+  // socket.on('ready', () => {
+  //   commandBlock.initClient(Auth)
+  //     .then((ctxClient) => {
+  //       client = ctxClient;
+  //       console.log(`client: ${ctxClient}`);
+  //     });
+  //   // .then(() => { commandBlock.loadTrainingProfile(client); });
+  // });
 
-  socket.on('initCmdBlock', () => {
-    console.log('init command block');
-    commandBlock.commandBlock(client)
-      .then((data) => {
-        socket.emit('command', data.output); // send command back to browser client
-      });
-  });
+  // socket.on('initCmdBlock', () => {
+  //   console.log('init command block');
+  //   commandBlock.commandBlock(client)
+  //     .then((data) => {
+  //       socket.emit('command', data.output); // send command back to browser client
+  //     });
+  // });
 });
 
 http.listen(3000, () => {

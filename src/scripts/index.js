@@ -10,8 +10,9 @@ $(document).ready(() => { // eslint-disable-line no-undef
   socket.emit('ready');
 
   s = Snap('#svg'); // eslint-disable-line no-undef
-  grid = new Grid({ startNode: [3, 3] });
+  grid = new Grid({ startNode: [2, 2] });
 
+  // grid.setup(s, 'random');
   grid.setup(s);
 });
 
