@@ -8,9 +8,7 @@ const io = require('socket.io')(http);
 const commandBlock = require('./src/scripts/commandBlock.js');
 const Auth = require('./src/scripts/auth.js');
 
-
 let client;
-
 
 app.use('/', express.static(path.join(__dirname, '/src')));
 
@@ -41,7 +39,6 @@ io.on('connection', (socket) => {
       });
   });
 });
-
 
 http.listen(3000, () => {
   console.log('listening on *:3000');
