@@ -144,7 +144,7 @@ export default class Grid {
   }
 
   /* SETUP */
-  setup(snap) {
+  setup(snap, template = undefined) { // TODO: add startNode parameter
     this.ignoringInput = false;
 
     // render static grid and add coordinates to [nodes]
@@ -161,7 +161,12 @@ export default class Grid {
     }
 
     // render dynamic components
-    this.redraw(snap, this.startNode);
+    if (template === undefined) {
+      this.redraw(snap, this.startNode);
+    } else if (template === 'random') {
+      this.createRandomPath(snap, 12, [3, 1]);
+    }
+    // TODO: case to load path from DB as template
   }
 
   redraw(snap, start = this.startNode) {
