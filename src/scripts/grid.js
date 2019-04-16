@@ -49,62 +49,62 @@ export default class Grid {
     this.visitedNodes = [];
   }
 
-  moveLeft() {
+  moveLeft(noDelay = false) {
     if (this.isValidNode([this.currentNode[0] - 1, this.currentNode[1]]) && !this.ignoringInput) {
       const newNode = this.getNode(this.currentNode[0] - 1, this.currentNode[1]);
       this.visitedNodes.push([...this.currentNode]);
       this.circle.animate({ cx: newNode[0], cy: newNode[1] }, this.delay);
       this.pathString += `L${newNode[0]},${newNode[1]}`;
       this.currentNode[0] -= 1;
-      this.ignoreInput(this.delay);
+      if (!noDelay) { this.ignoreInput(this.delay); }
       this.path.animate({ d: this.pathString }, this.delay);
     } else { console.log('invalid position'); }
   }
 
-  moveUp() {
+  moveUp(noDelay = false) {
     if (this.isValidNode([this.currentNode[0], this.currentNode[1] - 1]) && !this.ignoringInput) {
       const newNode = this.getNode(this.currentNode[0], this.currentNode[1] - 1);
       this.visitedNodes.push([...this.currentNode]);
       this.circle.animate({ cx: newNode[0], cy: newNode[1] }, this.delay);
       this.pathString += `L${newNode[0]},${newNode[1]}`;
       this.currentNode[1] -= 1;
-      this.ignoreInput(this.delay);
+      if (!noDelay) { this.ignoreInput(this.delay); }
       this.path.animate({ d: this.pathString }, this.delay);
     } else { console.log('invalid position'); }
   }
 
-  moveRight() {
+  moveRight(noDelay = false) {
     if (this.isValidNode([this.currentNode[0] + 1, this.currentNode[1]]) && !this.ignoringInput) {
       const newNode = this.getNode(this.currentNode[0] + 1, this.currentNode[1]);
       this.visitedNodes.push([...this.currentNode]);
       this.circle.animate({ cx: newNode[0], cy: newNode[1] }, this.delay);
       this.pathString += `L${newNode[0]},${newNode[1]}`;
       this.currentNode[0] += 1;
-      this.ignoreInput(this.delay);
+      if (!noDelay) { this.ignoreInput(this.delay); }
       this.path.animate({ d: this.pathString }, this.delay);
     } else { console.log('invalid position'); }
   }
 
-  moveDown() {
+  moveDown(noDelay = false) {
     if (this.isValidNode([this.currentNode[0], this.currentNode[1] + 1]) && !this.ignoringInput) {
       const newNode = this.getNode(this.currentNode[0], this.currentNode[1] + 1);
       this.visitedNodes.push([...this.currentNode]);
       this.circle.animate({ cx: newNode[0], cy: newNode[1] }, this.delay);
       this.pathString += `L${newNode[0]},${newNode[1]}`;
       this.currentNode[1] += 1;
-      this.ignoreInput(this.delay);
+      if (!noDelay) { this.ignoreInput(this.delay); }
       this.path.animate({ d: this.pathString }, this.delay);
     } else { console.log('invalid position'); }
   }
 
-  undo() {
+  undo(noDelay = false) {
     // undo the last move
     if (!this.ignoringInput && this.visitedNodes.length > 1) {
       this.currentNode = this.visitedNodes.pop();
       const newNode = this.getNode(this.currentNode[0], this.currentNode[1]);
       this.circle.animate({ cx: newNode[0], cy: newNode[1] }, this.delay);
       this.pathString = this.pathString.substring(0, this.pathString.lastIndexOf('L'));
-      this.ignoreInput(this.delay);
+      if (!noDelay) { this.ignoreInput(this.delay); }
       this.path.animate({ d: this.pathString }, this.delay);
     } else if (this.visitedNodes.length < 2) {
       console.log('no moves to undo!');
