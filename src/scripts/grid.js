@@ -206,4 +206,54 @@ export default class Grid {
         strokeWidth: 10,
       });
   }
+
+  createRandomPath(snap, steps, start = undefined) {
+    const deadEnds = [];
+    const moveOptions = [[0, -1, this.moveUp],
+      [-1, 0, this.moveLeft],
+      [0, 1, this.moveDown],
+      [1, 0, this.moveRight]];
+
+    if (start) {
+      this.startNode = [...start];
+    } else {
+      const startX = Math.floor(Math.random() * 5);
+      const startY = Math.floor(Math.random() * 5);
+      this.startNode = [startY, startX];
+    }
+
+    this.currentNode = this.startNode;
+    this.visitedNodes.push([...this.currentNode]);
+
+    // initialize start position
+    this.redraw(snap, this.startNode);
+
+    let i = 0;
+    while (i < steps) {
+      const validOptions = [];
+      moveOptions.forEach((option) => {
+        if (this.isValidNode([this.currentNode[0] + option[0], this.currentNode[1] + option[1], deadEnds])) {
+          validOptions.push(option[2]);
+        }
+      });
+
+      if (validOptions.length > 0) { // if there is at least one movement option, choose one
+        const choice = Math.floor(Math.random() * validOptions.length);
+        console.log(choice);
+        console.log(validOptions);
+        validOptions[choice].call(this, true);
+        i++;
+      } else { // otherwise it is a deadend--go back
+        deadEnds.push(this.currentNode);
+        this.undo(true);
+        console.log('undo');
+        i--;
+      }
+    }
+
+    this.phantomPath = this.pathString; // save the path and circle to draw them as phantoms on the next pass
+    this.phantomCircle = this.currentNode;
+
+    this.redraw(snap, this.startNode);
+  }
 }
