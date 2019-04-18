@@ -7,7 +7,6 @@ const verbose = 2;
 const dev = true;
 const options = { verbose, threshold: 0, dev };
 
-
 // helper function to parse result from JSON and convert to object
 const columns2obj = headers => (cols) => {
   const obj = {};
@@ -37,17 +36,21 @@ function commandBlock(client, blockId = 1, blockTime = 8000, threshold = 30) {
          }
      */
 
-    client.createSession({ _auth: client._auth, status: 'open' })
+    client
+      .createSession({ _auth: client._auth, status: 'open' })
       .then(() => client.subscribe({ streams: ['com'] })) // subscribe to commands stream
       .then((subs) => {
-        if (!subs[0].com) { reject(new Error('failed to subscribe')); } // in case of failure
+        if (!subs[0].com) {
+          reject(new Error('failed to subscribe'));
+        } // in case of failure
 
         const com2obj = columns2obj(subs[0].com.cols); // convert json to obj
 
         const onCom = (ev) => {
           const data = com2obj(ev.com);
           client._log(data);
-          if (!blockData.commands.hasOwnProperty(data.act)) { // check if command already stored
+          if (!blockData.commands.hasOwnProperty(data.act)) {
+            // check if command already stored
             // if (!Object.hasOwnProperty(blockData.commands, data.act)) {
             blockData.commands[data.act] = [1, data.pow]; // if not, add it
           } else {
@@ -67,7 +70,8 @@ function commandBlock(client, blockId = 1, blockTime = 8000, threshold = 30) {
 
         client.on('com', onCom);
 
-        setTimeout(() => { // once command block initialized, start timer which will end the block
+        setTimeout(() => {
+          // once command block initialized, start timer which will end the block
           client._log('Command block ended');
 
           // determine command by total (cumulative) power
@@ -75,20 +79,29 @@ function commandBlock(client, blockId = 1, blockTime = 8000, threshold = 30) {
 
           Object.keys(blockData.commands).forEach((command) => {
             const power = blockData.commands[command][1];
-            if (!highestPower[0]) { highestPower = [command, power]; } else if (power > highestPower[1]) { highestPower = [command, power]; }
+            if (!highestPower[0]) {
+              highestPower = [command, power];
+            } else if (power > highestPower[1]) {
+              highestPower = [command, power];
+            }
           });
 
-
-          client._log(`Command: ${highestPower[0]}  |  power: ${highestPower[1]}`);
+          client._log(
+            `Command: ${highestPower[0]}  |  power: ${highestPower[1]}`,
+          );
           blockData.output = [highestPower[0], highestPower[1]];
           // cleanup and close block
-          client.unsubscribe({ streams: ['com'] })
+          client
+            .unsubscribe({ streams: ['com'] })
             .then(() => client.updateSession({ status: 'close' }))
-            .then(() => { client.removeListener('com', onCom); });
+            .then(() => {
+              client.removeListener('com', onCom);
+            });
           // client._log(blockData);
           resolve(blockData);
         }, blockTime);
-      }).catch(err => client._warn(err));
+      })
+      .catch(err => client._warn(err));
   });
 }
 
@@ -96,10 +109,13 @@ function loadTrainingProfile(client) {
   // TODO: check of any profiles already loaded, allow to continue with existing profile or logout and select new
   // TODO: more robust error handling
   return new Promise((resolve, reject) => {
-    client.call('queryProfile', { _auth: client._auth }) // retrieve and display names of all profiles
+    client
+      .call('queryProfile', { _auth: client._auth }) // retrieve and display names of all profiles
       .then((profiles) => {
         console.log('Training Profiles');
-        if (profiles.length === 0) { reject(new Error('no profiles found')); }
+        if (profiles.length === 0) {
+          reject(new Error('no profiles found'));
+        }
         for (let i = 0; i < profiles.length; i++) {
           console.log(`${i}: ${profiles[i].name}`);
         }
@@ -107,17 +123,27 @@ function loadTrainingProfile(client) {
 
       .then(() => 'josh test')
 
-      .then((profileName) => { // load profile
-        client.call('queryHeadsets') // get headset id
+      .then((profileName) => {
+        // load profile
+        client
+          .call('queryHeadsets') // get headset id
           .then((res) => {
-            if (!res[0]) { throw new Error('Headset not detected. Is it on and connected to Cortex?'); }
+            if (!res[0]) {
+              throw new Error(
+                'Headset not detected. Is it on and connected to Cortex?',
+              );
+            }
             return res[0].id; // return the id of the headset
           })
           .then((headsetId) => {
             // load the selected profile
-            client.call('setupProfile', {
-              _auth: client._auth, headset: headsetId, profile: profileName, status: 'load',
-            })
+            client
+              .call('setupProfile', {
+                _auth: client._auth,
+                headset: headsetId,
+                profile: profileName,
+                status: 'load',
+              })
               .then(() => resolve());
           });
       });
@@ -127,20 +153,20 @@ function loadTrainingProfile(client) {
 function initClient(auth) {
   return new Promise((resolve) => {
     const client = new Cortex(options);
-    client.ready
-      .then(() => {
-        client.init({
+    client.ready.then(() => {
+      client
+        .init({
           username: auth.username,
           password: auth.password,
           client_id: auth.client_id,
           client_secret: auth.client_secret,
           debit: auth.debit,
         })
-          .then((result) => {
-            console.log(`init result${result}`);
-            resolve(client);
-          });
-      });
+        .then((result) => {
+          console.log(`init result${result}`);
+          resolve(client);
+        });
+    });
   });
 }
 
