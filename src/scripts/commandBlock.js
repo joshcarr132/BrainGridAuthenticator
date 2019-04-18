@@ -17,8 +17,7 @@ const columns2obj = headers => (cols) => {
   return obj;
 };
 
-
-function commandBlock(client, blockId = 1, blockTime = 8000) {
+function commandBlock(client, blockId = 1, blockTime = 8000, threshold = 30) {
   return new Promise((resolve, reject) => {
     const blockData = {
       // output: '',
@@ -56,6 +55,14 @@ function commandBlock(client, blockId = 1, blockTime = 8000) {
             blockData.commands[data.act][1] += data.pow; // total power by current command's power
           }
           console.log(blockData);
+          if (blockData.commands[data.act][1] > threshold) {
+            // end block if a command exceeds threshold value
+            blockData.output = [
+              blockData.commands[data.act][0],
+              blockData.commands[data.act][1],
+            ];
+            resolve(blockData);
+          }
         };
 
         client.on('com', onCom);
