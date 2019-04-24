@@ -42,8 +42,6 @@ export default class Grid {
     this.pathString = '';
     this.path = null;
     this.circle = null;
-    this.phantomCircle = null;
-    this.phantomPath = null;
 
     // grid
     this.nodes = [];
@@ -147,7 +145,7 @@ export default class Grid {
   }
 
   /* SETUP */
-  setup(snap, template = undefined) { // TODO: add startNode parameter
+  setup(snap, create = false) { // TODO: add startNode parameter
     this.ignoringInput = false;
 
     // render static grid and add coordinates to [nodes]
@@ -164,15 +162,17 @@ export default class Grid {
     }
 
     // render dynamic components
-    if (template === undefined) {
-      this.redraw(snap, this.startNode);
-    } else if (template === 'random') {
-      this.createRandomPath(snap, 12, [3, 1]);
+    if (create) {
+      this.redraw(snap, { template: this.createRandomPath() });
+    } else {
+      this.redraw(snap);
     }
+
     // TODO: case to load path from DB as template
   }
 
-  redraw(snap, start = this.startNode) {
+  // redraw(snap, template = undefined) {
+  redraw(snap, options = {}) {
     /* redraw is called once during setup to render the main circle indicator
       and initialize the path. It can be called again at any point to reset
       the animation to its initial state.
@@ -181,19 +181,28 @@ export default class Grid {
       start: an array with 2 elements that specifies the start position (e.g., [2, 1])
     */
 
-    // reset to default values
-    if (this.phantomCircle) {
-      const newNodePx = this.getNode(this.phantomCircle[0], this.phantomCircle[1]);
+    // render template
+    if (options.template) {
+      // const newNodePx = this.getNode(this.phantomCircle[0], this.phantomCircle[1]);
+      const newNodePx = this.getNode(options.template.circle[0], options.template.circle[1]);
       snap.circle(newNodePx[0], newNodePx[1], 20)
         .attr({ fill: 'grey', stroke: 'grey' });
-    }
-    if (this.phantomPath) {
-      snap.path(this.phantomPath)
+
+      snap.path(options.template.pathString)
         .attr({ fill: 'none', stroke: 'grey', strokeWidth: 20 });
+
+      options.start = options.template.start; // eslint-disable-line no-param-reassign
     }
 
+    // reset to default values
     this.visitedNodes = [];
-    this.currentNode = [...start];
+
+    if (options.start) {
+      this.currentNode = [...options.start];
+    } else {
+      this.currentNode = [2, 2];
+    }
+
     this.visitedNodes.push([...this.currentNode]);
     const newNodePx = this.getNode(this.currentNode[0], this.currentNode[1]);
 
@@ -221,7 +230,9 @@ export default class Grid {
   }
 
   createRandomPath(snap, steps, start = undefined) {
+    const output = {};
     const deadEnds = [];
+
     const moveOptions = [[0, -1, this.moveUp],
       [-1, 0, this.moveLeft],
       [0, 1, this.moveDown],
@@ -235,11 +246,14 @@ export default class Grid {
       this.startNode = [startY, startX];
     }
 
+    output.start = this.startNode;
+    output.commands = [];
+
     this.currentNode = this.startNode;
     this.visitedNodes.push([...this.currentNode]);
 
     // initialize start position
-    this.redraw(snap, this.startNode);
+    this.redraw(snap, { start: this.startNode });
 
     let i = 0;
     while (i < steps) {
@@ -252,21 +266,46 @@ export default class Grid {
 
       if (validOptions.length > 0) { // if there is at least one movement option, choose one
         const choice = Math.floor(Math.random() * validOptions.length);
-        console.log(choice);
-        console.log(validOptions);
+        // console.log(choice);
+        // console.log(validOptions);
         validOptions[choice].call(this, true);
+        output.commands.push(validOptions[choice]);
         i++;
       } else { // otherwise it is a deadend--go back
         deadEnds.push(this.currentNode);
         this.undo(true);
-        console.log('undo');
+        output.commands.pop();
+        // console.log('undo');
         i--;
       }
     }
 
-    this.phantomPath = this.pathString; // save the path and circle to draw them as phantoms on the next pass
-    this.phantomCircle = this.currentNode;
+    for (let j = 0; j < output.commands.length; j++) {
+      switch (output.commands[j]) {
+        case this.moveUp:
+          output.commands[j] = 'up';
+          break;
+        case this.moveLeft:
+          output.commands[j] = 'left';
+          break;
+        case this.moveRight:
+          output.commands[j] = 'right';
+          break;
+        case this.moveDown:
+          output.commands[j] = 'down';
+          break;
+        default:
+          break;
+      }
+    }
 
-    this.redraw(snap, this.startNode);
+    console.log(output);
+    output.pathString = this.pathString;
+    output.circle = this.currentNode;
+    return output;
+    // this.phantomPath = this.pathString; // save the path and circle to draw them as phantoms on the next pass
+    // this.phantomCircle = this.currentNode;
+
+    // this.redraw(snap, this.startNode);
   }
 }

@@ -12,8 +12,8 @@ $(document).ready(() => { // eslint-disable-line no-undef
   s = Snap('#svg'); // eslint-disable-line no-undef
   grid = new Grid({ startNode: [2, 2] });
 
-  // grid.setup(s, 'random');
-  grid.setup(s);
+  grid.setup(s, true);
+  // grid.setup(s);
 });
 
 // HANDLE INPUTS
