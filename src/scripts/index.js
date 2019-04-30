@@ -12,7 +12,7 @@ $(document).ready(() => { // eslint-disable-line no-undef
   s = Snap('#svg'); // eslint-disable-line no-undef
   grid = new Grid({ startNode: [2, 2] });
 
-  grid.setup(s, true);
+  grid.setup(s, true); // create = true
   // grid.setup(s);
 });
 
@@ -37,7 +37,8 @@ $(document).keypress((e) => { // eslint-disable-line no-undef
       break;
 
     case 32: // spacebar
-      grid.redraw(s);
+      // grid.redraw(s, { keepTemplate: true });
+      grid.reset(s);
       console.log('reinitializing...');
       break;
 
@@ -77,4 +78,6 @@ $(document).keypress((e) => { // eslint-disable-line no-undef
       break;
   }
   console.log(grid.currentNode);
+  console.log(grid.template.commands);
+  console.log(grid.commands);
 });

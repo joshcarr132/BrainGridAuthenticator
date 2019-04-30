@@ -47,6 +47,7 @@ export default class Grid {
     this.nodes = [];
     this.currentNode = [];
     this.visitedNodes = [];
+    this.commands = [];
   }
 
   moveLeft(noDelay = false) {
@@ -58,6 +59,7 @@ export default class Grid {
       this.currentNode[0] -= 1;
       if (!noDelay) { this.ignoreInput(this.delay); }
       this.path.animate({ d: this.pathString }, this.delay);
+      this.commands.push('left');
     } else { console.log('invalid position'); }
   }
 
@@ -70,6 +72,7 @@ export default class Grid {
       this.currentNode[1] -= 1;
       if (!noDelay) { this.ignoreInput(this.delay); }
       this.path.animate({ d: this.pathString }, this.delay);
+      this.commands.push('up');
     } else { console.log('invalid position'); }
   }
 
@@ -82,6 +85,7 @@ export default class Grid {
       this.currentNode[0] += 1;
       if (!noDelay) { this.ignoreInput(this.delay); }
       this.path.animate({ d: this.pathString }, this.delay);
+      this.commands.push('right');
     } else { console.log('invalid position'); }
   }
 
@@ -94,6 +98,7 @@ export default class Grid {
       this.currentNode[1] += 1;
       if (!noDelay) { this.ignoreInput(this.delay); }
       this.path.animate({ d: this.pathString }, this.delay);
+      this.commands.push('down');
     } else { console.log('invalid position'); }
   }
 
@@ -163,7 +168,7 @@ export default class Grid {
 
     // render dynamic components
     if (create) {
-      this.redraw(snap, { template: this.createRandomPath() });
+      this.redraw(snap, { template: this.createRandomPath(snap, 8) });
     } else {
       this.redraw(snap);
     }
@@ -171,7 +176,6 @@ export default class Grid {
     // TODO: case to load path from DB as template
   }
 
-  // redraw(snap, template = undefined) {
   redraw(snap, options = {}) {
     /* redraw is called once during setup to render the main circle indicator
       and initialize the path. It can be called again at any point to reset
@@ -184,6 +188,7 @@ export default class Grid {
     // render template
     if (options.template) {
       // const newNodePx = this.getNode(this.phantomCircle[0], this.phantomCircle[1]);
+      this.template = options.template;
       const newNodePx = this.getNode(options.template.circle[0], options.template.circle[1]);
       snap.circle(newNodePx[0], newNodePx[1], 20)
         .attr({ fill: 'grey', stroke: 'grey' });
@@ -196,6 +201,7 @@ export default class Grid {
 
     // reset to default values
     this.visitedNodes = [];
+    this.commands = [];
 
     if (options.start) {
       this.currentNode = [...options.start];
