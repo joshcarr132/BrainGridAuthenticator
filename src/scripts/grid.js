@@ -235,6 +235,12 @@ export default class Grid {
       });
   }
 
+  reset(snap) {
+    if (this.template) {
+      this.redraw(snap, { template: this.template });
+    }
+  }
+
   createRandomPath(snap, steps, start = undefined) {
     const output = {};
     const deadEnds = [];
