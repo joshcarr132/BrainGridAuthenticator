@@ -6,9 +6,9 @@ const DELAY = 200; // length of the animation
 
 export default class Grid {
   constructor(options) {
-    // geometry
     if (!options) options = {}; // eslint-disable-line no-param-reassign
 
+    // geometry
     if (options.width) {
       this.width = options.width;
     } else { this.width = WIDTH; }
@@ -278,8 +278,6 @@ export default class Grid {
 
       if (validOptions.length > 0) { // if there is at least one movement option, choose one
         const choice = Math.floor(Math.random() * validOptions.length);
-        // console.log(choice);
-        // console.log(validOptions);
         validOptions[choice].call(this, true);
         output.commands.push(validOptions[choice]);
         i++;
@@ -287,7 +285,6 @@ export default class Grid {
         deadEnds.push(this.currentNode);
         this.undo(true);
         output.commands.pop();
-        // console.log('undo');
         i--;
       }
     }
@@ -311,13 +308,27 @@ export default class Grid {
       }
     }
 
-    console.log(output);
+    console.log(output.commands);
     output.pathString = this.pathString;
     output.circle = this.currentNode;
     return output;
-    // this.phantomPath = this.pathString; // save the path and circle to draw them as phantoms on the next pass
-    // this.phantomCircle = this.currentNode;
+  }
 
-    // this.redraw(snap, this.startNode);
+  submitPassword(inputPwd, template) { // both args should be arrays
+    if (this.validatePassword(inputPwd, template)) {
+      // if password matches, do something
+    } else {
+      // else do something else
+    }
+  }
+
+  validatePassword(input, template) {
+    if (input.length !== template.length) { return false; }
+
+    for (let i = 0; i < template.length; i++) {
+      if (input[i] !== template[i]) { return false; }
+    }
+
+    return true;
   }
 }
