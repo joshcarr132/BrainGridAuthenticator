@@ -106,6 +106,7 @@ export default class Grid {
     // undo the last move
     if (!this.ignoringInput && this.visitedNodes.length > 1) {
       this.currentNode = this.visitedNodes.pop();
+      this.commands.pop();
       const newNode = this.getNode(this.currentNode[0], this.currentNode[1]);
       this.circle.animate({ cx: newNode[0], cy: newNode[1] }, this.delay);
       this.pathString = this.pathString.substring(0, this.pathString.lastIndexOf('L'));
