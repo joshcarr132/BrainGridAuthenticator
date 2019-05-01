@@ -73,6 +73,11 @@ $(document).keypress((e) => { // eslint-disable-line no-undef
       });
       break;
 
+    case 103: // g
+      grid.submitPassword();
+      break;
+
+
     default:
       console.log(e.which);
       break;

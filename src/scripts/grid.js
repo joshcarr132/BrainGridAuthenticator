@@ -314,10 +314,22 @@ export default class Grid {
     return output;
   }
 
-  submitPassword(inputPwd, template) { // both args should be arrays
-    if (this.validatePassword(inputPwd, template)) {
+  submitPassword() { // both args should be arrays
+    if (this.validatePassword(this.commands, this.template.commands)) {
       // if password matches, do something
+      console.log('password match!');
+      this.circle.attr({
+        fill: 'blue',
+        stroke: 'blue',
+      });
+
+      this.path.attr({
+        stroke: 'blue',
+      });
+
+      this.ignoreInput();
     } else {
+      console.log('incorrect!');
       // else do something else
     }
   }
