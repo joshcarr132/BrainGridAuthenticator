@@ -1,14 +1,55 @@
-# dependencies
-node_modules
 
-# production
-build
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+:q
+josh:BrainGridLock$ ls
+app.js  data  dbtest  node_modules  package.json  package-lock.json  README.md  src
+josh:BrainGridLock$ cd data/
+josh:data$ ls
+collection-0--1618710910459061290.wt  diagnostic.data                  index-5--1618710910459061290.wt  _mdb_catalog.wt  storage.bson      WiredTiger.lock
+collection-2--1618710910459061290.wt  index-1--1618710910459061290.wt  index-6--1618710910459061290.wt  mongod.lock      WiredTiger        WiredTiger.turtle
+collection-4--1618710910459061290.wt  index-3--1618710910459061290.wt  journal                          sizeStorer.wt    WiredTigerLAS.wt  WiredTiger.wt
+josh:data$ cd ..
+josh:BrainGridLock$ rm -R data
+josh:BrainGridLock$ ls
+app.js  dbtest  node_modules  package.json  package-lock.json  README.md  src
+josh:BrainGridLock$ mkdir data
+josh:BrainGridLock$ git status
+On branch dev
+Your branch is up to date with 'origin/dev'.
 
-# misc
-.DS_Store
-src/scripts/auth.js
-npm-debug.log
-yarn-error.log
-yarn.lock
-.yarnclean
-.vscode
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git checkout -- <file>..." to discard changes in working directory)
+
+        modified:   app.js
+        modified:   package-lock.json
+    8 node_modules
+    7 
+    6 # production
+    5 build
+    4 
+    3 # misc
+    2 .DS_Store
+    1 src/scripts/auth.js
++ 10  data/                                                                                                                                                                                                        
+    1 npm-debug.log
+    2 yarn-error.log
+    3 yarn.lock
+    4 .yarnclean
+    5 .vscode
+ INSERT  .gitignore | +                                                                                                                                                          unix | utf-8 | conf   66%   10:6  
+-- INSERT --
