@@ -4,16 +4,23 @@ const socket = io(); // eslint-disable-line
 
 let s;
 let grid;
+const create = true;
 
 // SETUP
 $(document).ready(() => { // eslint-disable-line no-undef
-  socket.emit('ready');
-
+  const id = prompt('enter id');
+  // console.log(id);
   s = Snap('#svg'); // eslint-disable-line no-undef
   grid = new Grid({ startNode: [2, 2] });
 
-  grid.setup(s, true); // create = true
-  // grid.setup(s);
+  socket.emit('ready', id);
+
+  if (create) {
+    grid.setup(s, true); // create = true
+  } else {
+    // retrieve from db
+    grid.setup(s);
+  }
 });
 
 // HANDLE INPUTS
@@ -74,7 +81,14 @@ $(document).keypress((e) => { // eslint-disable-line no-undef
       break;
 
     case 103: // g
-      grid.submitPassword();
+      if (grid.submitPassword()) {
+        // send to db via socket
+        if (create) {
+          socket.emit('success', { create: true, template: grid.template });
+        } else {
+          socket.emit('success', { template: grid.template });
+        }
+      }
       break;
 
 
