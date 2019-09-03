@@ -28,9 +28,9 @@ app.get('/', (req, res) => {
 });
 
 io.on('connection', (socket) => {
-  console.log('ctxClient connected');
+  console.log('web client connected');
   socket.on('disconnect', () => {
-    console.log('ctxClient disconnected');
+    console.log('web client disconnected');
   });
 
   socket.on('ready', (id) => {
