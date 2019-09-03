@@ -4,23 +4,25 @@ const socket = io(); // eslint-disable-line
 
 let s;
 let grid;
-const create = true;
 
 // SETUP
 $(document).ready(() => { // eslint-disable-line no-undef
-  const id = prompt('enter id');
+  const id = prompt('enter id'); // eslint-disable-line no-alert
   // console.log(id);
   s = Snap('#svg'); // eslint-disable-line no-undef
-  grid = new Grid({ startNode: [2, 2] });
 
   socket.emit('ready', id);
 
-  if (create) {
-    grid.setup(s, true); // create = true
-  } else {
-    // retrieve from db
-    grid.setup(s);
-  }
+  socket.on('db_response', (res) => {
+    if (res !== -1) {
+      // grid.setup(s, res);
+      grid = new Grid({ template: res });
+      grid.setup(s);
+    } else {
+      grid = new Grid({});
+      grid.setup(s);
+    }
+  });
 });
 
 // HANDLE INPUTS
@@ -80,16 +82,16 @@ $(document).keypress((e) => { // eslint-disable-line no-undef
       });
       break;
 
-    case 103: // g
-      if (grid.submitPassword()) {
-        // send to db via socket
-        if (create) {
-          socket.emit('success', { create: true, template: grid.template });
-        } else {
-          socket.emit('success', { template: grid.template });
-        }
-      }
-      break;
+      // case 103: // g
+      //   if (grid.submitPassword()) {
+      //     // send to db via socket
+      //     if (create) {
+      //       socket.emit('success', { create: true, template: grid.template });
+      //     } else {
+      //       socket.emit('success', { template: grid.template });
+      //     }
+      //   }
+      //   break;
 
 
     default:
@@ -97,6 +99,7 @@ $(document).keypress((e) => { // eslint-disable-line no-undef
       break;
   }
   console.log(grid.currentNode);
-  console.log(grid.template.commands);
+  console.log(grid.options.template.commands);
   console.log(grid.commands);
+  console.log(grid.pathString);
 });

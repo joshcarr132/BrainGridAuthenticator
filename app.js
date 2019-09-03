@@ -34,15 +34,25 @@ io.on('connection', (socket) => {
   });
 
   socket.on('ready', (id) => {
+    console.log(id);
+    console.log(typeof id);
+    id = parseInt(id);
     dbClient = new MongoClient(dbURL);
     dbClient.connect((err) => {
-      if (err) { throw new Error(); }
-      console.log('connected to mongodb server!!!')
+      if (err) { throw new Error(err); }
+      console.log(`Connected to mongodb server at: ${dbURL}`);
       const db = dbClient.db(dbName);
       const collection = db.collection('passwords');
 
-      collection.findOne({id: 99}).then(doc => console.log(doc));
-      // TODO: now that this works, figure out the format to send to grid for template/guide 
+      collection.findOne({ id }).then((doc) => {
+        console.log(doc);
+        if (doc) {
+          socket.emit('db_response', doc);
+        } else {
+          socket.emit('db_response', -1);
+        }
+      });
+      // TODO: now that this works, figure out the format to send to grid for template/guide
     });
 
     console.log(id);
