@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "A prototype pattern-lock style authentication scheme for Emotiv BCIs.",
   "scripts": {
-    "start": "node app.js & mongod --dbpath=./data",
+    "start": "nodemon app.js & mongod --dbpath=./data",
     "start-watch": "nodemon app.js"
   },
   "author": "JK Carr",
