@@ -20,6 +20,8 @@ module.exports = {
     'no-prototype-builtins': 0,
     'import/prefer-default-export': 0,
     'linebreak-style': 0,
+    'key-spacing': 0,
+    'guard-for-in': 0,
   },
 
 };
