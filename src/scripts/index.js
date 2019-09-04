@@ -30,24 +30,24 @@ $(document).keypress((e) => { // eslint-disable-line no-undef
   console.log(e.which);
   switch (e.which) {
     case 97: // left
-      grid.moveLeft();
+      grid.move('left');
       break;
 
     case 119: // up
-      grid.moveUp();
+      grid.move('up');
       break;
 
     case 100: // right
-      grid.moveRight();
+      grid.move('right');
       break;
 
     case 115: // down
-      grid.moveDown();
+      grid.move('down');
       break;
 
     case 32: // spacebar
       // grid.redraw(s, { keepTemplate: true });
-      grid.reset(s);
+      grid.redraw(s, false, true);
       console.log('reinitializing...');
       break;
 
@@ -100,6 +100,6 @@ $(document).keypress((e) => { // eslint-disable-line no-undef
   }
   console.log(grid.currentNode);
   console.log(grid.options.template.commands);
-  console.log(grid.commands);
+  console.log(grid.moves);
   console.log(grid.pathString);
 });

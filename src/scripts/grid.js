@@ -1,347 +1,308 @@
+// DEFAULTS
 const WIDTH = 900;
 const HEIGHT = 900;
 const LINECOLOUR = 'coral';
+const XPOINTS = 5;
+const YPOINTS = 5;
+const DELAY = 200;
 
-const DELAY = 200; // length of the animation
 
 export default class Grid {
   constructor(options) {
-    if (!options) options = {}; // eslint-disable-line no-param-reassign
+    if (!options) {
+      this.options = {};
+    } else {
+      this.options = options;
+    }
 
-    // geometry
-    if (options.width) {
-      this.width = options.width;
+    // set options
+    if (this.options.template) {
+      this.template = this.options.template;
+    } else { this.template = this.createRandomPath('random', 8); }
+
+    if (this.options.width) {
+      this.width = this.options.width;
     } else { this.width = WIDTH; }
 
-    if (options.height) {
-      this.height = options.height;
+    if (this.options.height) {
+      this.height = this.options.height;
     } else { this.height = HEIGHT; }
 
-    if (options.lineColour) {
-      this.lineColour = options.lineColour;
+    if (this.options.lineColour) {
+      this.lineColour = this.options.lineColour;
     } else { this.lineColour = LINECOLOUR; }
 
-    if (options.delay) {
-      this.delay = options.delay;
+    if (this.options.delay) {
+      this.delay = this.options.delay;
     } else { this.delay = DELAY; }
 
-    if (options.startNode) {
-      this.startNode = options.startNode;
-    } else { this.startNode = [2, 2]; }
+    if (this.options.xpoints) {
+      this.xpoints = this.options.xpoints;
+    } else { this.xpoints = XPOINTS; }
 
-    this.cellWidth = this.width / 5;
-    this.cellHeight = this.height / 5;
+    if (this.options.ypoints) {
+      this.ypoints = this.options.ypoints;
+    } else { this.ypoints = YPOINTS; }
+
+
+    // calculate geometry
+    this.cellWidth = this.width / this.xpoints;
+    this.cellHeight = this.height / this.ypoints;
     this.hPadding = this.cellWidth / 2;
     this.vPadding = this.cellHeight / 2;
     this.centerX = this.width / 2;
     this.centerY = this.height / 2;
     this.ignoringInput = true;
 
-    // svg objects
+
+    // initialize svg objects
     this.s = null;
     this.pathString = '';
     this.path = null;
     this.circle = null;
 
-    // grid
+
+    // initialize grid objects
     this.nodes = [];
-    this.currentNode = [];
     this.visitedNodes = [];
-    this.commands = [];
+    this.moves = [];
+    this.currentNode = [...this.template.start];
   }
 
-  moveLeft(noDelay = false) {
-    if (this.isValidNode([this.currentNode[0] - 1, this.currentNode[1]]) && !this.ignoringInput) {
-      const newNode = this.getNode(this.currentNode[0] - 1, this.currentNode[1]);
-      this.visitedNodes.push([...this.currentNode]);
-      this.circle.animate({ cx: newNode[0], cy: newNode[1] }, this.delay);
-      this.pathString += `L${newNode[0]},${newNode[1]}`;
-      this.currentNode[0] -= 1;
-      if (!noDelay) { this.ignoreInput(this.delay); }
-      this.path.animate({ d: this.pathString }, this.delay);
-      this.commands.push('left');
-    } else { console.log('invalid position'); }
-  }
 
-  moveUp(noDelay = false) {
-    if (this.isValidNode([this.currentNode[0], this.currentNode[1] - 1]) && !this.ignoringInput) {
-      const newNode = this.getNode(this.currentNode[0], this.currentNode[1] - 1);
-      this.visitedNodes.push([...this.currentNode]);
-      this.circle.animate({ cx: newNode[0], cy: newNode[1] }, this.delay);
-      this.pathString += `L${newNode[0]},${newNode[1]}`;
-      this.currentNode[1] -= 1;
-      if (!noDelay) { this.ignoreInput(this.delay); }
-      this.path.animate({ d: this.pathString }, this.delay);
-      this.commands.push('up');
-    } else { console.log('invalid position'); }
-  }
-
-  moveRight(noDelay = false) {
-    if (this.isValidNode([this.currentNode[0] + 1, this.currentNode[1]]) && !this.ignoringInput) {
-      const newNode = this.getNode(this.currentNode[0] + 1, this.currentNode[1]);
-      this.visitedNodes.push([...this.currentNode]);
-      this.circle.animate({ cx: newNode[0], cy: newNode[1] }, this.delay);
-      this.pathString += `L${newNode[0]},${newNode[1]}`;
-      this.currentNode[0] += 1;
-      if (!noDelay) { this.ignoreInput(this.delay); }
-      this.path.animate({ d: this.pathString }, this.delay);
-      this.commands.push('right');
-    } else { console.log('invalid position'); }
-  }
-
-  moveDown(noDelay = false) {
-    if (this.isValidNode([this.currentNode[0], this.currentNode[1] + 1]) && !this.ignoringInput) {
-      const newNode = this.getNode(this.currentNode[0], this.currentNode[1] + 1);
-      this.visitedNodes.push([...this.currentNode]);
-      this.circle.animate({ cx: newNode[0], cy: newNode[1] }, this.delay);
-      this.pathString += `L${newNode[0]},${newNode[1]}`;
-      this.currentNode[1] += 1;
-      if (!noDelay) { this.ignoreInput(this.delay); }
-      this.path.animate({ d: this.pathString }, this.delay);
-      this.commands.push('down');
-    } else { console.log('invalid position'); }
-  }
-
-  undo(noDelay = false) {
-    // undo the last move
-    if (!this.ignoringInput && this.visitedNodes.length > 1) {
-      this.currentNode = this.visitedNodes.pop();
-      this.commands.pop();
-      const newNode = this.getNode(this.currentNode[0], this.currentNode[1]);
-      this.circle.animate({ cx: newNode[0], cy: newNode[1] }, this.delay);
-      this.pathString = this.pathString.substring(0, this.pathString.lastIndexOf('L'));
-      if (!noDelay) { this.ignoreInput(this.delay); }
-      this.path.animate({ d: this.pathString }, this.delay);
-    } else if (this.visitedNodes.length < 2) {
-      console.log('no moves to undo!');
-    }
-  }
-
-  /* HELPER FUNCTIONS */
-  getNode(x, y) {
-    /* Enter a grid location (e.g., [0,2]) to get the x and y pixel
-      values of that grid position. */
-    const nodeX = this.nodes[x][y].x;
-    const nodeY = this.nodes[x][y].y;
-    return [nodeX, nodeY];
-  }
-
-  isValidNode(coordinates, exclude = undefined) {
-    /* Called before any movement to determine if move is valid.
-       Returns true if the destination node is a valid grid position
-       (i.e., int between 0-4 for both x and y) AND the node has not
-       previously been visited. */
-    if (exclude && exclude.includes(coordinates)) { return false; }
-    if (coordinates[0] < 0 || coordinates[0] > 4) { return false; }
-    if (coordinates[1] < 0 || coordinates[1] > 4) { return false; }
-
-    return !(this.visitedNodes.some((node) => { // eslint-disable-line
-      return (node[0] === coordinates[0] && node[1] === coordinates[1]);
-    }));
-  }
-
-  ignoreInput() {
-    /* Issuing a movement command before a previous animation has completed causes some
-      undesired animation and it looks pretty bad. ignoreInput is called when an animation
-      begins in order to block input for it's duration. */
+  setup(snap) {
+    // create and render static elements
     this.ignoringInput = true;
-    window.setTimeout(() => {
-      this.ignoringInput = false;
-    }, this.delay + 50); // add a small extra delay to be sure the animation finishes
-  }
 
-  /* SETUP */
-  setup(snap, create = false) { // TODO: add startNode parameter
-    this.ignoringInput = false;
-
-    // render static grid and add coordinates to [nodes]
-    for (let i = 0; i <= 5; i++) {
+    for (let i = 0; i <= this.xpoints - 1; i++) {
       const row = [];
-      for (let j = 0; j <= 5; j++) {
+      for (let j = 0; j <= this.ypoints - 1; j++) {
         const pointX = this.cellWidth * i + this.hPadding;
         const pointY = this.cellHeight * j + this.vPadding;
         snap.circle(pointX, pointY, 10);
 
         row.push({ x: pointX, y: pointY });
       }
+
       this.nodes.push(row);
     }
 
-    // render dynamic components
-    if (create) {
-      this.redraw(snap, { template: this.createRandomPath(snap, 8) });
-    } else {
-      this.redraw(snap);
-    }
-
-    // TODO: case to load path from DB as template
+    this.redraw(snap);
   }
 
-  redraw(snap, options = {}) {
-    /* redraw is called once during setup to render the main circle indicator
-      and initialize the path. It can be called again at any point to reset
-      the animation to its initial state.
 
-      snap: the snap object
-      start: an array with 2 elements that specifies the start position (e.g., [2, 1])
-    */
+  redraw(snap, guide = false, reset = false) {
+    if (reset) {
+      this.visitedNodes = [];
+      this.moves = [];
+      this.currentNode = [...this.template.start];
+      this.visitedNodes.push(this.currentNode);
 
-    // render template
-    if (options.template) {
-      // const newNodePx = this.getNode(this.phantomCircle[0], this.phantomCircle[1]);
-      this.template = options.template;
-      const newNodePx = this.getNode(options.template.circle[0], options.template.circle[1]);
-      snap.circle(newNodePx[0], newNodePx[1], 20)
-        .attr({ fill: 'grey', stroke: 'grey' });
+      if (this.path) { this.path.remove(); }
+      if (this.circle) { this.circle.remove(); }
+    }
 
-      snap.path(options.template.pathString)
+    if (guide) {
+      // render the guide
+      this.guidePath = snap.path(this.getPathString(this.template.start, this.template.moves))
         .attr({ fill: 'none', stroke: 'grey', strokeWidth: 20 });
 
-      options.start = options.template.start; // eslint-disable-line no-param-reassign
+      const guideCirclePx = this.getNodePx(...this.template.end);
+
+      this.guideCircle = snap.circle(guideCirclePx[0], guideCirclePx[1])
+        .attr({ fill: 'grey', stroke: 'grey' });
     }
 
-    // reset to default values
-    this.visitedNodes = [];
-    this.commands = [];
+    // initialize path
+    this.pathString = this.getPathString(this.template.start, this.moves);
 
-    if (options.start) {
-      this.currentNode = [...options.start];
-    } else {
-      this.currentNode = [2, 2];
-    }
-
-    this.visitedNodes.push([...this.currentNode]);
-    const newNodePx = this.getNode(this.currentNode[0], this.currentNode[1]);
-
-    this.pathString = `M${newNodePx[0]},${newNodePx[1]}`;
-
-
-    if (this.path) { this.path.remove(); }
-    if (this.circle) { this.circle.remove(); }
-
-    // initialize path before circle because snap doesn't support z-index
-    snap.circle(newNodePx[0], newNodePx[1], 10) // so the middle grid dot isnt visible
+    const nodePx = this.getNodePx(...this.template.start);
+    snap.circle(nodePx[0], nodePx[1], 10)
       .attr({ fill: this.lineColour, stroke: this.lineColour });
 
     this.path = snap.path(this.pathString)
       .attr({ stroke: this.lineColour, fill: 'none', strokeWidth: 20 });
 
-    // circle indicator
-    this.circle = snap.circle(newNodePx[0], newNodePx[1], 30)
+
+    // circle position indicator
+    const circlePx = this.getNodePx(this.currentNode[0], this.currentNode[1]);
+    this.circle = snap.circle(circlePx[0], circlePx[1], 30)
       .attr({
         fill: this.lineColour,
         stroke: this.lineColour,
-        strokeOpacity: 0.3,
         strokeWidth: 10,
+        strokeOpacity: 0.3,
       });
+
+    this.ignoringInput = false;
   }
 
-  reset(snap) {
-    if (this.template) {
-      this.redraw(snap, { template: this.template });
-    }
+
+  getNodePx(x, y) {
+    const nodeX = this.nodes[x][y].x;
+    const nodeY = this.nodes[x][y].y;
+    return [nodeX, nodeY];
   }
 
-  createRandomPath(snap, steps, start = undefined) {
-    const output = {};
-    const deadEnds = [];
 
-    const moveOptions = [[0, -1, this.moveUp],
-      [-1, 0, this.moveLeft],
-      [0, 1, this.moveDown],
-      [1, 0, this.moveRight]];
+  getPathString(start, moves) {
+    // return pathstring
+    const cx = this.getNodePx(...this.template.start);
+    let s = `M${cx[0]},${cx[1]}`;
+    let newNode;
 
-    if (start) {
-      this.startNode = [...start];
+    moves.forEach((move) => {
+      if (move === 'up') { newNode = [this.currentNode[0], this.currentNode[1] - 1]; }
+      if (move === 'down') { newNode = [this.currentNode[0], this.currentNode[1] + 1]; }
+      if (move === 'left') { newNode = [this.currentNode[0] - 1, this.currentNode[1]]; }
+      if (move === 'right') { newNode = [this.currentNode[0] + 1, this.currentNode[1]]; }
+
+      const newNodePx = this.getNodePx(...newNode);
+
+      s += `L${newNodePx[0]},${newNodePx[1]}`;
+    });
+
+    return s;
+  }
+
+
+  createRandomPath(startNode = 'random', pathLength = 8, verbose = false) {
+    // generate a random path of desired length and start point
+    // uses dimensions of the current grid i.e., this.xpoints this.ypoints
+    let start;
+
+    if (startNode === 'random') {
+      const x = Math.floor(Math.random() * this.xpoints);
+      const y = Math.floor(Math.random() * this.ypoints);
+      start = [x, y];
     } else {
-      const startX = Math.floor(Math.random() * 5);
-      const startY = Math.floor(Math.random() * 5);
-      this.startNode = [startY, startX];
+      start = startNode;
     }
 
-    output.start = this.startNode;
-    output.commands = [];
+    const output = {};
+    output.moves = [];
+    output.start = start;
 
-    this.currentNode = this.startNode;
-    this.visitedNodes.push([...this.currentNode]);
+    const moveOptions = {
+      up    : [-1, 0],
+      right : [0, 1],
+      down  : [1, 0],
+      left  : [0, -1],
+    };
 
-    // initialize start position
-    this.redraw(snap, { start: this.startNode });
+    const visited = [];
+    const deadEnds = [];
+    const matrix = [];
+
+    for (let i = 0; i < this.xpoints; i++) {
+      matrix[i] = new Array(this.ypoints).fill(0);
+      // TODO confirm x and y are correct
+    }
+
+    let currentNode = [...start];
+    visited.push(currentNode);
+    matrix[currentNode[0]][currentNode[1]] = 1;
+
 
     let i = 0;
-    while (i < steps) {
+    while (i < pathLength) {
       const validOptions = [];
-      moveOptions.forEach((option) => {
-        if (this.isValidNode([this.currentNode[0] + option[0], this.currentNode[1] + option[1], deadEnds])) {
-          validOptions.push(option[2]);
+
+      // for (const opt in Object.prototype.keys(moveOptions)) {
+      moveOptions.forEach((opt) => { // TODO extract from loop
+        const option = moveOptions[opt];
+        const candidateX = currentNode[0] + option[0];
+        const candidateY = currentNode[1] + option[1];
+
+        if (this.isValidNode(candidateX, candidateY, visited, deadEnds)) {
+          validOptions.push([moveOptions[opt], opt]);
         }
       });
 
-      if (validOptions.length > 0) { // if there is at least one movement option, choose one
+      if (validOptions.length > 0) {
         const choice = Math.floor(Math.random() * validOptions.length);
-        validOptions[choice].call(this, true);
-        output.commands.push(validOptions[choice]);
+        const move = validOptions[choice][0];
+
+        currentNode = [currentNode[0] + move[0], currentNode[1] + move[1]];
+        visited.push(currentNode);
+        output.moves.push(validOptions[choice][1]);
+        matrix[currentNode[0]][currentNode[1]] = 1;
         i++;
-      } else { // otherwise it is a deadend--go back
-        deadEnds.push(this.currentNode);
-        this.undo(true);
-        output.commands.pop();
+      } else {
+        deadEnds.push(currentNode);
+        matrix[currentNode[0]][currentNode[1]] = 0;
+        currentNode = visited.pop();
+        output.moves.pop();
         i--;
       }
-    }
 
-    for (let j = 0; j < output.commands.length; j++) {
-      switch (output.commands[j]) {
-        case this.moveUp:
-          output.commands[j] = 'up';
-          break;
-        case this.moveLeft:
-          output.commands[j] = 'left';
-          break;
-        case this.moveRight:
-          output.commands[j] = 'right';
-          break;
-        case this.moveDown:
-          output.commands[j] = 'down';
-          break;
-        default:
-          break;
+      if (verbose) {
+        console.log(matrix);
       }
     }
 
-    console.log(output.commands);
-    output.pathString = this.pathString;
-    output.circle = this.currentNode;
+    output.end = currentNode;
     return output;
   }
 
-  submitPassword() { // both args should be arrays
-    if (this.validatePassword(this.commands, this.template.commands)) {
-      // if password matches, do something
-      console.log('password match!');
-      this.circle.attr({
-        fill: 'blue',
-        stroke: 'blue',
-      });
+  // TODO : confirm this works
+  isValidNode(x, y, visitedList = this.visitedNodes, deadEnds = null) {
+    if (x < 0 || x > this.xpoints - 1) { return false; }
+    if (y < 0 || y > this.ypoints - 1) { return false; }
 
-      this.path.attr({
-        stroke: 'blue',
-      });
-
-      this.ignoreInput();
-    } else {
-      console.log('incorrect!');
-      // else do something else
+    if (visitedList.some(node => (node[0] === x && node[1] === y))) {
+      return false;
     }
-  }
 
-  validatePassword(input, template) {
-    if (input.length !== template.length) { return false; }
-
-    for (let i = 0; i < template.length; i++) {
-      if (input[i] !== template[i]) { return false; }
+    if (deadEnds && deadEnds.some(node => (node[0] === x && node[1] === y))) {
+      return false;
     }
 
     return true;
+  }
+
+  ignoreInput(delay = this.delay) {
+    this.ignoringInput = true;
+    window.setTimeout(() => {
+      this.ignoringInput = false;
+    }, delay + 50);
+  }
+
+
+  move(dir) {
+    let newNode;
+    if (dir === 'up')    { newNode = [this.currentNode[0], this.currentNode[1] - 1]; }
+    if (dir === 'down')  { newNode = [this.currentNode[0], this.currentNode[1] + 1]; }
+    if (dir === 'left')  { newNode = [this.currentNode[0] - 1, this.currentNode[1]]; }
+    if (dir === 'right') { newNode = [this.currentNode[0] + 1, this.currentNode[1]]; }
+
+    const newNodePx = this.getNodePx(newNode[0], newNode[1]);
+
+    if (this.isValidNode(newNode, this.visitedNodes) && !this.ignoringInput) {
+      this.visitedNodes.push([...this.currentNode]);
+      this.pathString += `L${newNodePx[0]},${newNodePx[1]}`;
+      this.moves.push(dir);
+      this.currentNode = newNode;
+      this.ignoreInput();
+      this.circle.animate({ cx: newNodePx[0], cy: newNodePx[1] }, this.delay);
+      this.path.animate({ d: this.pathString }, this.delay);
+    } else {
+      console.log('invalid position');
+      // TODO maybe add a visual indicator
+    }
+  }
+
+
+  undo() {
+    if (this.visitedNodes.length <= 1) { console.log('no moves to undo'); }
+    if (!this.ignoringInput) {
+      this.currentNode = this.visitedNodes.pop();
+      this.moves.pop();
+      const newNodePx = this.getNodePx(this.currentNode[0], this.currentNode[1]);
+      this.pathString = this.pathString.substring(0, this.pathString.lastIndexOf('L'));
+      this.ignoreInput();
+      this.circle.animate({ cx: newNodePx[0], cy: newNodePx[1] }, this.delay);
+      this.path.animate({ d: this.pathString }, this.delay);
+    }
   }
 }
