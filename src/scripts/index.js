@@ -97,9 +97,10 @@ $(document).keypress((e) => { // eslint-disable-line no-undef
       break;
   }
   console.log(grid.currentNode);
-  console.log(grid.options.template.commands);
+  console.log(grid.options.template.moves);
   console.log(grid.moves);
   console.log(grid.pathString);
+  console.log(grid.visitedNodes);
 });
 
 
