@@ -46,7 +46,7 @@ export default class Grid {
 
 
     // calculate geometry
-    this.cellWidth = this.width / this.xpoints;
+   this.cellWidth = this.width / this.xpoints;
     this.cellHeight = this.height / this.ypoints;
     this.hPadding = this.cellWidth / 2;
     this.vPadding = this.cellHeight / 2;
@@ -196,6 +196,7 @@ export default class Grid {
 
     for (let i = 0; i < this.xpoints; i++) {
       matrix[i] = new Array(this.ypoints).fill(0);
+      console.log(matrix);
       // TODO confirm x and y are correct
     }
 
@@ -208,8 +209,7 @@ export default class Grid {
     while (i < pathLength) {
       const validOptions = [];
 
-      // for (const opt in Object.prototype.keys(moveOptions)) {
-      moveOptions.forEach((opt) => { // TODO extract from loop
+      for (const opt of moveOptions) {
         const option = moveOptions[opt];
         const candidateX = currentNode[0] + option[0];
         const candidateY = currentNode[1] + option[1];
@@ -217,7 +217,8 @@ export default class Grid {
         if (this.isValidNode(candidateX, candidateY, visited, deadEnds)) {
           validOptions.push([moveOptions[opt], opt]);
         }
-      });
+      // });
+      }
 
       if (validOptions.length > 0) {
         const choice = Math.floor(Math.random() * validOptions.length);
