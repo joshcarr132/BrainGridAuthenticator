@@ -4,6 +4,7 @@ const socket = io(); // eslint-disable-line
 
 let s;
 let grid;
+let dbResponse;
 
 // SETUP
 $(document).ready(() => { // eslint-disable-line no-undef
@@ -16,6 +17,7 @@ $(document).ready(() => { // eslint-disable-line no-undef
   socket.on('db_response', (res) => {
     if (res !== -1) {
       // grid.setup(s, res);
+      dbResponse = res;
       grid = new Grid({ template: res });
       grid.setup(s);
     } else {
@@ -82,17 +84,13 @@ $(document).keypress((e) => { // eslint-disable-line no-undef
       });
       break;
 
-      // case 103: // g
-      //   if (grid.submitPassword()) {
-      //     // send to db via socket
-      //     if (create) {
-      //       socket.emit('success', { create: true, template: grid.template });
-      //     } else {
-      //       socket.emit('success', { template: grid.template });
-      //     }
-      //   }
-      //   break;
-
+    case 103: // g
+      if (checkPassword(dbResponse.moves, grid.moves)) {
+        console.log('match');
+      } else {
+        console.log("password doesn't match!");
+      }
+      break;
 
     default:
       console.log(e.which);
@@ -103,3 +101,15 @@ $(document).keypress((e) => { // eslint-disable-line no-undef
   console.log(grid.moves);
   console.log(grid.pathString);
 });
+
+
+// check the input password against the database response
+function checkPassword(password, input) {
+  if (password.length !== input.length) { return false; }
+
+  for (let i = 0; i < password.length; i++) {
+    if (password[i] !== input[i]) {return false;}
+  }
+
+  return true;
+}
