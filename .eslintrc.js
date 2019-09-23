@@ -22,6 +22,7 @@ module.exports = {
     'linebreak-style': 0,
     'key-spacing': 0,
     'guard-for-in': 0,
+    'no-multi-spaces': 0,
   },
 
 };
