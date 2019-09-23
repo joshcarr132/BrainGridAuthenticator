@@ -246,7 +246,6 @@ export default class Grid {
     return output;
   }
 
-  // TODO : confirm this works
   isValidNode(x, y, visitedList = this.visitedNodes, deadEnds = null) {
     if (x < 0 || x > this.xpoints - 1) { return false; }
     if (y < 0 || y > this.ypoints - 1) { return false; }
