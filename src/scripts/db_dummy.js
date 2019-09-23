@@ -31,7 +31,7 @@ const insertDocuments = function(db, callback) {
   collection.insertOne({
     id: 99,
     start: [2, 2],
-    commands: ['left', 'up', 'right', 'right'],
+    moves: ['left', 'up', 'right', 'right'],
     circle: [3, 1],
     pathString: 'M450,450L270,450L270,270L450,270L630,270',
   }, (err, result) => {
