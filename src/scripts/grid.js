@@ -277,9 +277,9 @@ export default class Grid {
     if (dir === 'left')  { newNode = [this.currentNode[0] - 1, this.currentNode[1]]; }
     if (dir === 'right') { newNode = [this.currentNode[0] + 1, this.currentNode[1]]; }
 
-    const newNodePx = this.getNodePx(newNode[0], newNode[1]);
 
-    if (this.isValidNode(newNode, this.visitedNodes) && !this.ignoringInput) {
+    if (this.isValidNode(newNode[0], newNode[1], this.visitedNodes) && !this.ignoringInput) {
+      const newNodePx = this.getNodePx(newNode[0], newNode[1]);
       this.visitedNodes.push([...this.currentNode]);
       this.pathString += `L${newNodePx[0]},${newNodePx[1]}`;
       this.moves.push(dir);
