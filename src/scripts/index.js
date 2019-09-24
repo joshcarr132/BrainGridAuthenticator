@@ -70,7 +70,7 @@ $(document).keypress((e) => {
       grid.undo();
       break;
 
-    case 13: // enter
+    case 98: // b
       grid.ignoringInput = true;
       socket.emit('initCmdBlock');
 

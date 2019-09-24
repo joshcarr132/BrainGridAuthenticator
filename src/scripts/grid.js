@@ -116,7 +116,7 @@ export default class Grid {
     }
 
     // initialize path
-    this.pathString = this.getPathString(this.template.start, this.moves);
+    this.pathString = this.getPathString(this.template.start, this.moves).pathString;
 
     const nodePx = this.getNodePx(...this.template.start);
     this.snap.circle(nodePx[0], nodePx[1], 10)
@@ -149,22 +149,24 @@ export default class Grid {
 
   getPathString(start, moves) {
     // return pathstring
-    const cx = this.getNodePx(...this.template.start);
+    const cx = this.getNodePx(...start);
     let s = `M${cx[0]},${cx[1]}`;
-    let newNode;
+    let newNode = start;
 
     moves.forEach((move) => {
-      if (move === 'up') { newNode = [this.currentNode[0], this.currentNode[1] - 1]; }
-      if (move === 'down') { newNode = [this.currentNode[0], this.currentNode[1] + 1]; }
-      if (move === 'left') { newNode = [this.currentNode[0] - 1, this.currentNode[1]]; }
-      if (move === 'right') { newNode = [this.currentNode[0] + 1, this.currentNode[1]]; }
+      if (move === 'up') { newNode = [newNode[0], newNode[1] - 1]; }
+      if (move === 'down') { newNode = [newNode[0], newNode[1] + 1]; }
+      if (move === 'left') { newNode = [newNode[0] - 1, newNode[1]]; }
+      if (move === 'right') { newNode = [newNode[0] + 1, newNode[1]]; }
 
       const newNodePx = this.getNodePx(...newNode);
 
       s += `L${newNodePx[0]},${newNodePx[1]}`;
     });
 
-    return s;
+    // the last point assigned to newNode will be the end node of the path
+
+      return { pathString: s, endNode: newNode };
   }
 
 
@@ -309,7 +311,7 @@ export default class Grid {
 
   showGuide() {
       // render the guide
-      this.guidePath = this.snap.path(this.getPathString(this.template.start, this.template.moves))
+      this.guidePath = this.snap.path(this.getPathString(this.template.start, this.template.moves).pathString)
           .attr({ fill: 'none', stroke: 'grey', strokeWidth: 20 });
 
       const guideCirclePx = this.getNodePx(...this.template.end);
