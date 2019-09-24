@@ -21,9 +21,13 @@ export default class Grid {
     }
 
     // set options
+    // if (this.options.createNew) {    // probably don't need this. assume if no template then createMode.
+    //   this.createMode = true;
+    // } else { this.createMode = false; }
+
     if (this.options.template) {
       this.template = this.options.template;
-    } else { this.template = this.createRandomPath('random', 8); }
+    } else { this.createMode = true; }
 
     if (this.options.width) {
       this.width = this.options.width;
