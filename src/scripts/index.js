@@ -1,6 +1,8 @@
-import Grid from './grid.js'; // eslint-disable-line import/extensions
+import Grid from './grid.js';
 
-const socket = io(); // eslint-disable-line
+/* eslint no-undef: 0 */
+/* eslint no-alert: 0 */
+const socket = io();
 
 let s;
 let grid;
