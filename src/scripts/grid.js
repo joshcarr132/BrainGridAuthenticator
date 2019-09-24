@@ -122,16 +122,16 @@ export default class Grid {
     this.pathString = this.getPathString(this.template.start, this.moves);
 
     const nodePx = this.getNodePx(...this.template.start);
-    snap.circle(nodePx[0], nodePx[1], 10)
+    this.snap.circle(nodePx[0], nodePx[1], 10)
       .attr({ fill: this.lineColour, stroke: this.lineColour });
 
-    this.path = snap.path(this.pathString)
+    this.path = this.snap.path(this.pathString)
       .attr({ stroke: this.lineColour, fill: 'none', strokeWidth: 20 });
 
 
     // circle position indicator
     const circlePx = this.getNodePx(this.currentNode[0], this.currentNode[1]);
-    this.circle = snap.circle(circlePx[0], circlePx[1], 30)
+    this.circle = this.snap.circle(circlePx[0], circlePx[1], 30)
       .attr({
         fill: this.lineColour,
         stroke: this.lineColour,
