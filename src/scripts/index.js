@@ -102,6 +102,10 @@ $(document).keypress((e) => {
     default:
       console.log(e.which);
       break;
+
+    case 103: // g
+      grid.showGuide();
+      break;
   }
   console.log(grid.currentNode);
   console.log(grid.options.template.moves);

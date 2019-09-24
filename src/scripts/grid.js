@@ -107,17 +107,6 @@ export default class Grid {
       if (this.circle) { this.circle.remove(); }
     }
 
-    if (guide) {
-      // render the guide
-      this.guidePath = snap.path(this.getPathString(this.template.start, this.template.moves))
-        .attr({ fill: 'none', stroke: 'grey', strokeWidth: 20 });
-
-      const guideCirclePx = this.getNodePx(...this.template.end);
-
-      this.guideCircle = snap.circle(guideCirclePx[0], guideCirclePx[1])
-        .attr({ fill: 'grey', stroke: 'grey' });
-    }
-
     // initialize path
     this.pathString = this.getPathString(this.template.start, this.moves);
 
@@ -309,5 +298,16 @@ export default class Grid {
       this.circle.animate({ cx: newNodePx[0], cy: newNodePx[1] }, this.delay);
       this.path.animate({ d: this.pathString }, this.delay);
     }
+  }
+
+  showGuide() {
+      // render the guide
+      this.guidePath = this.snap.path(this.getPathString(this.template.start, this.template.moves))
+          .attr({ fill: 'none', stroke: 'grey', strokeWidth: 20 });
+
+      const guideCirclePx = this.getNodePx(...this.template.end);
+
+      this.guideCircle = this.snap.circle(guideCirclePx[0], guideCirclePx[1])
+          .attr({ fill: 'grey', stroke: 'grey' });
   }
 }
