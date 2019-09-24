@@ -7,6 +7,8 @@ const YPOINTS = 5;
 const DELAY = 200;
 
 
+// TODO: fix indentation (should be 2 spaces but it is 4 in some places)
+// TODO: remove pathString from DB schema; it has to be recalculated every time based on window dimensions
 export default class Grid {
   constructor(snap, options) {
 
