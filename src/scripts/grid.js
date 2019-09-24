@@ -76,6 +76,7 @@ export default class Grid {
     this.visitedNodes = [];
     this.moves = [];
     this.currentNode = [...this.template.start];
+    this.guideVisible = false;
   }
 
 
@@ -100,7 +101,10 @@ export default class Grid {
   }
 
 
-  redraw(guide = false, reset = false) {
+  redraw(reset = false) {
+    if (this.path) { this.path.remove(); }
+    if (this.circle) { this.circle.remove(); }
+
     if (reset) {
       this.visitedNodes = [];
       this.moves = [];
@@ -312,5 +316,36 @@ export default class Grid {
 
       this.guideCircle = this.snap.circle(guideCirclePx[0], guideCirclePx[1])
           .attr({ fill: 'grey', stroke: 'grey' });
+
+      this.guideVisible = true;
+  }
+
+  hideGuide() {
+      if (this.guidePath) { this.guidePath.remove(); }
+      if (this.guideCircle) { this.guideCircle.remove(); }
+
+      this.guideVisible = false;
+    }
+
+  toggleShowGuide() {
+      if (this.guideVisible) {
+          // delete the guide SVG objects
+          this.guidePath.remove();
+          this.guideCircle.remove();
+          this.guideVisible = false;
+      } else {
+          // render the guides
+          this.guidePath = this.snap.path(this.getPathString(this.template.start, this.template.moves).pathString)
+              .attr({ fill: 'none', stroke: 'grey', strokeWidth: 20 });
+
+          const end = this.getPathString(this.template.start, this.template.moves).endNode;
+          const guideCirclePx = this.getNodePx(...end);
+
+          this.guideCircle = this.snap.circle(guideCirclePx[0], guideCirclePx[1], 20)
+              .attr({ fill: 'grey', stroke: 'grey' });
+
+          this.guideVisible = true;
+      }
+      this.redraw();
   }
 }

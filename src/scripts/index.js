@@ -62,7 +62,7 @@ $(document).keypress((e) => {
 
     case 32: // spacebar
       // grid.redraw(s, { keepTemplate: true });
-      grid.redraw(false, true);
+      grid.redraw(true);
       console.log('reinitializing...');
       break;
 
@@ -111,7 +111,11 @@ $(document).keypress((e) => {
       break;
 
     case 103: // g
-      grid.showGuide();
+      if (createNew) {
+          grid.toggleShowGuide();
+      } else {
+          console.log('cannot show guides in enter mode');
+      }
       break;
   }
   // console.log(grid.currentNode);
