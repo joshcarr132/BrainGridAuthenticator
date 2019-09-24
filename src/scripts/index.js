@@ -8,16 +8,16 @@ let dbResponse;
 let createNew;
 
 // SETUP
-$(document).ready(() => { // eslint-disable-line no-undef
+$(document).ready(() => {
   selectModePrompt();
-  const id = prompt('enter id'); // eslint-disable-line no-alert
+  const id = prompt('enter id');
   // console.log(id);
-  s = Snap('#svg'); // eslint-disable-line no-undef
+  s = Snap('#svg');
 
   socket.emit('ready', id);
 
   socket.on('db_response', (res) => {
-    if (res !== -1) {
+    if (res !== -1) {        // matching id FOUND in databse
       // grid.setup(s, res);
       // TODO: if createNew and database entry is found, ask whether to overwrite
       dbResponse = res; // hold onto this in global scope to check against later
@@ -35,7 +35,7 @@ $(document).ready(() => { // eslint-disable-line no-undef
 });
 
 // HANDLE INPUTS
-$(document).keypress((e) => { // eslint-disable-line no-undef
+$(document).keypress((e) => { 
   console.log(e.which);
   switch (e.which) {
     case 97: // left
