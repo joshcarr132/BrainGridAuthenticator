@@ -19,12 +19,17 @@ $(document).ready(() => { // eslint-disable-line no-undef
   socket.on('db_response', (res) => {
     if (res !== -1) {
       // grid.setup(s, res);
-      dbResponse = res;
-      grid = new Grid({ template: res });
-      grid.setup(s);
-    } else {
-      grid = new Grid({});
-      grid.setup(s);
+      // TODO: if createNew and database entry is found, ask whether to overwrite
+      dbResponse = res; // hold onto this in global scope to check against later
+      grid = new Grid(s, { template: res });
+      grid.setup();
+    } else {                 // matching id NOT FOUND in database
+        if (createNew) {
+          grid = new Grid({});
+          grid.setup();
+        } else {
+          // TODO: raise an error or something here
+        }
     }
   });
 });
@@ -51,7 +56,7 @@ $(document).keypress((e) => { // eslint-disable-line no-undef
 
     case 32: // spacebar
       // grid.redraw(s, { keepTemplate: true });
-      grid.redraw(s, false, true);
+      grid.redraw(false, true);
       console.log('reinitializing...');
       break;
 
@@ -86,7 +91,7 @@ $(document).keypress((e) => { // eslint-disable-line no-undef
       });
       break;
 
-    case 103: // g
+    case 13: // enter
       if (checkPassword(dbResponse.moves, grid.moves)) {
         console.log('match');
       } else {

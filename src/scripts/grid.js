@@ -8,7 +8,10 @@ const DELAY = 200;
 
 
 export default class Grid {
-  constructor(options) {
+  constructor(snap, options) {
+
+    this.snap = snap;
+
     if (!options) {
       this.options = {};
     } else {
@@ -70,7 +73,7 @@ export default class Grid {
   }
 
 
-  setup(snap) {
+  setup() {
     // create and render static elements
     this.ignoringInput = true;
 
@@ -79,7 +82,7 @@ export default class Grid {
       for (let j = 0; j <= this.ypoints - 1; j++) {
         const pointX = this.cellWidth * i + this.hPadding;
         const pointY = this.cellHeight * j + this.vPadding;
-        snap.circle(pointX, pointY, 10);
+        this.snap.circle(pointX, pointY, 10);
 
         row.push({ x: pointX, y: pointY });
       }
@@ -87,11 +90,11 @@ export default class Grid {
       this.nodes.push(row);
     }
 
-    this.redraw(snap);
+    this.redraw();
   }
 
 
-  redraw(snap, guide = false, reset = false) {
+  redraw(guide = false, reset = false) {
     if (reset) {
       this.visitedNodes = [];
       this.moves = [];
