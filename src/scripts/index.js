@@ -4,6 +4,11 @@ import Grid from './grid.js';
 /* eslint no-alert: 0 */
 const socket = io();
 
+// IDEA: incorporate the idea of a 'session', which can be a 'create' session or
+// an 'enter' session. The session initializes everything, handles flow/sequence
+// of events, and cleanup/db submission.
+
+
 let s;
 let grid;
 let dbResponse;
@@ -13,7 +18,6 @@ let createNew;
 $(document).ready(() => {
   selectModePrompt();
   const id = prompt('enter id');
-  // console.log(id);
   s = Snap('#svg');
 
   socket.emit('ready', id);
@@ -94,26 +98,27 @@ $(document).keypress((e) => {
       break;
 
     case 13: // enter
+      console.log('checking password...');
       if (checkPassword(dbResponse.moves, grid.moves)) {
-        console.log('match');
+        console.log('successfully authenticated!');
       } else {
         console.log("password doesn't match!");
       }
       break;
 
     default:
-      console.log(e.which);
+      // console.log(e.which);
       break;
 
     case 103: // g
       grid.showGuide();
       break;
   }
-  console.log(grid.currentNode);
-  console.log(grid.options.template.moves);
-  console.log(grid.moves);
-  console.log(grid.pathString);
-  console.log(grid.visitedNodes);
+  // console.log(grid.currentNode);
+  // console.log(grid.options.template.moves);
+  // console.log(grid.moves);
+  // console.log(grid.pathString);
+  // console.log(grid.visitedNodes);
 });
 
 
@@ -128,6 +133,8 @@ function checkPassword(password, input) {
   return true;
 }
 
+// a prompt window to select create mode or enter mode
+// placeholder until i build a proper ui for this
 function selectModePrompt() {
   const mode = prompt('select mode:\n(c)reate new password | (e)nter a password');
   if (mode === 'c') {

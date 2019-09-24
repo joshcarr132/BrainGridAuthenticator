@@ -55,7 +55,7 @@ export default class Grid {
 
 
     // calculate geometry
-   this.cellWidth = this.width / this.xpoints;
+    this.cellWidth = this.width / this.xpoints;
     this.cellHeight = this.height / this.ypoints;
     this.hPadding = this.cellWidth / 2;
     this.vPadding = this.cellHeight / 2;
@@ -194,8 +194,6 @@ export default class Grid {
 
     for (let i = 0; i < this.xpoints; i++) {
       matrix[i] = new Array(this.ypoints).fill(0);
-      console.log(matrix);
-      // TODO confirm x and y are correct
     }
 
     let currentNode = [...start];
@@ -242,6 +240,7 @@ export default class Grid {
 
     output.end = currentNode;
     return output;
+  }
   }
 
   isValidNode(x, y, visitedList = this.visitedNodes, deadEnds = null) {
