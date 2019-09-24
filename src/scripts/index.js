@@ -5,9 +5,11 @@ const socket = io(); // eslint-disable-line
 let s;
 let grid;
 let dbResponse;
+let createNew;
 
 // SETUP
 $(document).ready(() => { // eslint-disable-line no-undef
+  selectModePrompt();
   const id = prompt('enter id'); // eslint-disable-line no-alert
   // console.log(id);
   s = Snap('#svg'); // eslint-disable-line no-undef
@@ -113,4 +115,16 @@ function checkPassword(password, input) {
   }
 
   return true;
+}
+
+function selectModePrompt() {
+  const mode = prompt('select mode:\n(c)reate new password | (e)nter a password');
+  if (mode === 'c') {
+    createNew = true;
+  } else if (mode === 'e') {
+    createNew = true;
+  } else {
+    console.log('select a valid mode');
+    selectModePrompt();
+  }
 }
