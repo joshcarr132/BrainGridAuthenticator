@@ -12,8 +12,9 @@ const io = require('socket.io')(http);
 // init mongodb
 const dbURL = 'mongodb://localhost:27017';
 const dbName = 'bci-dev';
-// const dbClient = new MongoClient(dbURL);
 let dbClient;
+let connection;
+
 
 
 const commandBlock = require('./src/scripts/commandBlock.js');
@@ -33,17 +34,17 @@ io.on('connection', (socket) => {
     console.log('web client disconnected');
   });
 
-  socket.on('ready', (id) => {
-    console.log(id);
-    console.log(typeof id);
-    id = parseInt(id);
-    dbClient = new MongoClient(dbURL);
-    dbClient.connect((err) => {
-      if (err) { throw new Error(err); }
-      console.log(`Connected to mongodb server at: ${dbURL}`);
-      const db = dbClient.db(dbName);
-      const collection = db.collection('passwords');
+  // initialize db connection
+  dbClient = new MongoClient(dbURL);
+  dbClient.connect((err) => {
+    if (err) { throw new Error(err); }
+    console.log(`Connected to mongodb server at: ${dbURL}`);
+    const db = dbClient.db(dbName);
+    collection = db.collection('passwords');
+  });
 
+  socket.on('ready', (id) => {
+    id = parseInt(id);
       collection.findOne({ id }).then((doc) => {
         console.log(doc);
         if (doc) {
