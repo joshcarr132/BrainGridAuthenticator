@@ -247,7 +247,7 @@ export default class Grid {
     output.end = currentNode;
     return output;
   }
-  }
+  
 
   isValidNode(x, y, visitedList = this.visitedNodes, deadEnds = null) {
     if (x < 0 || x > this.xpoints - 1) { return false; }
