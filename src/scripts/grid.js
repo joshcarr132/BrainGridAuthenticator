@@ -20,11 +20,6 @@ export default class Grid {
       this.options = options;
     }
 
-    // set options
-    // if (this.options.createNew) {    // probably don't need this. assume if no template then createMode.
-    //   this.createMode = true;
-    // } else { this.createMode = false; }
-
     if (this.options.width) {
       this.width = this.options.width;
     } else { this.width = WIDTH; }
@@ -79,7 +74,7 @@ export default class Grid {
     this.nodes = [];
     this.visitedNodes = [];
     this.moves = [];
-    this.currentNode = [...this.template.start];
+    this.currentNode = this.start;
     this.guideVisible = false;
   }
 
@@ -97,10 +92,8 @@ export default class Grid {
 
         row.push({ x: pointX, y: pointY });
       }
-
       this.nodes.push(row);
     }
-
     this.redraw();
   }
 
@@ -112,7 +105,7 @@ export default class Grid {
     if (reset) {
       this.visitedNodes = [];
       this.moves = [];
-      this.currentNode = [...this.template.start];
+      this.currentNode = this.start;
       this.visitedNodes.push(this.currentNode);
 
       if (this.path) { this.path.remove(); }
@@ -120,15 +113,14 @@ export default class Grid {
     }
 
     // initialize path
-    this.pathString = this.getPathString(this.template.start, this.moves).pathString;
+    this.pathString = this.getTemplate(this.start, this.moves).pathString;
 
-    const nodePx = this.getNodePx(...this.template.start);
+    const nodePx = this.getNodePx(...this.start);
     this.snap.circle(nodePx[0], nodePx[1], 10)
       .attr({ fill: this.lineColour, stroke: this.lineColour });
 
     this.path = this.snap.path(this.pathString)
       .attr({ stroke: this.lineColour, fill: 'none', strokeWidth: 20 });
-
 
     // circle position indicator
     const circlePx = this.getNodePx(this.currentNode[0], this.currentNode[1]);
@@ -191,7 +183,7 @@ export default class Grid {
   }
 
 
-  getPathString(start, moves) {
+  getTemplate(startNode, moves) {
     // return pathstring
     const cx = this.getNodePx(...startNode);
     let s = `M${cx[0]},${cx[1]}`;
@@ -235,6 +227,7 @@ export default class Grid {
     output.moves = [];
     output.start = start;
 
+    // TODO: need a function for this!
     const moveOptions = {
       up  : [0, -1],
       down  : [0, 1],
@@ -267,7 +260,6 @@ export default class Grid {
         if (this.isValidNode(candidateX, candidateY, visited, deadEnds)) {
           validOptions.push([moveOptions[opt], opt]);
         }
-      // });
       }
 
       if (validOptions.length > 0) {
@@ -286,12 +278,10 @@ export default class Grid {
         output.moves.pop();
         i--;
       }
-
       if (verbose) {
         console.log(matrix);
       }
     }
-
     output.end = currentNode;
     return output;
   }

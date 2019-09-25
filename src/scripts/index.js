@@ -4,15 +4,11 @@ import Grid from './grid.js';
 /* eslint no-alert: 0 */
 const socket = io();
 
-// IDEA: incorporate the idea of a 'session', which can be a 'create' session or
-// an 'enter' session. The session initializes everything, handles flow/sequence
-// of events, and cleanup/db submission.
-
 
 let s;
 let grid;
-let dbResponse;
-let createNew;
+let correctPwd;
+let createMode;
 
 // SETUP
 $(document).ready(() => {
@@ -40,7 +36,7 @@ $(document).ready(() => {
 });
 
 // HANDLE INPUTS
-$(document).keypress((e) => { 
+$(document).keypress((e) => {
   console.log(e.which);
   switch (e.which) {
     case 97: // left
@@ -98,7 +94,7 @@ $(document).keypress((e) => {
 
     case 13: // enter
       console.log('checking password...');
-      if (checkPassword(dbResponse.moves, grid.moves)) {
+      if (checkPassword(correctPwd.moves, grid.moves)) {
         console.log('successfully authenticated!');
       } else {
         console.log("password doesn't match!");
@@ -106,11 +102,10 @@ $(document).keypress((e) => {
       break;
 
     default:
-      // console.log(e.which);
       break;
 
     case 103: // g
-      if (createNew) {
+      if (createMode) {
           grid.toggleShowGuide();
       } else {
           console.log('cannot show guides in enter mode');
@@ -147,9 +142,9 @@ function checkPassword(password, input) {
 function selectModePrompt() {
   const mode = prompt('select mode:\n(c)reate new password | (e)nter a password');
   if (mode === 'c') {
-    createNew = true;
+    createMode = true;
   } else if (mode === 'e') {
-    createNew = false;
+    createMode = false;
   } else {
     console.log('select a valid mode');
     selectModePrompt();

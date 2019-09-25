@@ -53,15 +53,13 @@ io.on('connection', (socket) => {
           socket.emit('db_response', -1);
         }
       });
-      // TODO: now that this works, figure out the format to send to grid for template/guide
     });
 
-    console.log(id);
   socket.on('create_success', (dbEntry) => {
     // send to db
   });
 
-
+  // CORTEX API
   // socket.on('ready', () => {
   //   commandBlock.initClient(Auth)
   //     .then((ctxClient) => {
