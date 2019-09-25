@@ -189,24 +189,28 @@ export default class Grid {
 
   getPathString(start, moves) {
     // return pathstring
-    const cx = this.getNodePx(...start);
+    const cx = this.getNodePx(...startNode);
     let s = `M${cx[0]},${cx[1]}`;
-    let newNode = start;
+    let newNode = startNode;
+    let lastNode = startNode;
 
+    // TODO: make function
     moves.forEach((move) => {
-      if (move === 'up') { newNode = [newNode[0], newNode[1] - 1]; }
-      if (move === 'down') { newNode = [newNode[0], newNode[1] + 1]; }
-      if (move === 'left') { newNode = [newNode[0] - 1, newNode[1]]; }
-      if (move === 'right') { newNode = [newNode[0] + 1, newNode[1]]; }
+      if (move === 'up') { newNode = [lastNode[0], lastNode[1] - 1]; }
+      if (move === 'down') { newNode = [lastNode[0], lastNode[1] + 1]; }
+      if (move === 'left') { newNode = [lastNode[0] - 1, lastNode[1]]; }
+      if (move === 'right') { newNode = [lastNode[0] + 1, lastNode[1]]; }
 
       const newNodePx = this.getNodePx(...newNode);
 
       s += `L${newNodePx[0]},${newNodePx[1]}`;
+
+      lastNode = newNode;
     });
 
-    // the last point assigned to newNode will be the end node of the path
+    // the last point assigned to lastNode will be the end node of the path
 
-      return { pathString: s, endNode: newNode };
+    return { pathString: s, endNode: lastNode };
   }
 
 
@@ -218,20 +222,20 @@ export default class Grid {
     if (startNode === 'random') {
       const x = Math.floor(Math.random() * this.xpoints);
       const y = Math.floor(Math.random() * this.ypoints);
-      start = [x, y];
-    } else {
-      start = startNode;
+      startNode = [x, y];
     }
+
+    start = startNode;
 
     const output = {};
     output.moves = [];
     output.start = start;
 
     const moveOptions = {
-      up    : [-1, 0],
-      right : [0, 1],
-      down  : [1, 0],
-      left  : [0, -1],
+      up  : [0, -1],
+      down  : [0, 1],
+      left    : [-1, 0],
+      right : [1, 0],
     };
 
     const visited = [];
@@ -251,7 +255,7 @@ export default class Grid {
     while (i < pathLength) {
       const validOptions = [];
 
-      for (const opt of moveOptions) {
+      for (const opt of Object.keys(moveOptions)) {
         const option = moveOptions[opt];
         const candidateX = currentNode[0] + option[0];
         const candidateY = currentNode[1] + option[1];
