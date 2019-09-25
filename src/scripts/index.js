@@ -144,7 +144,7 @@ function selectModePrompt() {
   if (mode === 'c') {
     createNew = true;
   } else if (mode === 'e') {
-    createNew = true;
+    createNew = false;
   } else {
     console.log('select a valid mode');
     selectModePrompt();
