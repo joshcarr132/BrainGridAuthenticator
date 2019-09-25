@@ -25,10 +25,6 @@ export default class Grid {
     //   this.createMode = true;
     // } else { this.createMode = false; }
 
-    if (this.options.template) {
-      this.template = this.options.template;
-    } else { this.createMode = true; }
-
     if (this.options.width) {
       this.width = this.options.width;
     } else { this.width = WIDTH; }
@@ -53,6 +49,14 @@ export default class Grid {
       this.ypoints = this.options.ypoints;
     } else { this.ypoints = YPOINTS; }
 
+
+    if (this.options.template) {
+      this.template = this.options.template;
+      this.start = this.template.start;
+    } else {
+      this.createMode = true;
+      this.assignNewTemplate(this.createRandomPath());
+    }
 
     // calculate geometry
     this.cellWidth = this.width / this.xpoints;
