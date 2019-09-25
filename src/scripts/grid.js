@@ -291,7 +291,12 @@ export default class Grid {
     output.end = currentNode;
     return output;
   }
-  
+
+
+  assignNewTemplate(newTemplate) {
+    this.template = newTemplate;
+    this.start = newTemplate.start;
+  }
 
   isValidNode(x, y, visitedList = this.visitedNodes, deadEnds = null) {
     if (x < 0 || x > this.xpoints - 1) { return false; }
