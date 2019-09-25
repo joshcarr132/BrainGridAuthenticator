@@ -140,6 +140,46 @@ export default class Grid {
   }
 
 
+  move(dir) {
+    let newNode;
+
+    // TODO: this could be a method
+    if (dir === 'up')    { newNode = [this.currentNode[0], this.currentNode[1] - 1]; }
+    if (dir === 'down')  { newNode = [this.currentNode[0], this.currentNode[1] + 1]; }
+    if (dir === 'left')  { newNode = [this.currentNode[0] - 1, this.currentNode[1]]; }
+    if (dir === 'right') { newNode = [this.currentNode[0] + 1, this.currentNode[1]]; }
+
+
+    if (this.isValidNode(newNode[0], newNode[1], this.visitedNodes) && !this.ignoringInput) {
+      const newNodePx = this.getNodePx(newNode[0], newNode[1]);
+      this.visitedNodes.push([...this.currentNode]);
+      this.pathString += `L${newNodePx[0]},${newNodePx[1]}`;
+      this.moves.push(dir);
+      this.currentNode = newNode;
+      this.ignoreInput();
+      this.circle.animate({ cx: newNodePx[0], cy: newNodePx[1] }, this.delay);
+      this.path.animate({ d: this.pathString }, this.delay);
+    } else {
+      console.log('invalid position');
+      // TODO maybe add a visual indicator
+    }
+  }
+
+
+  undo() {
+    if (this.visitedNodes.length <= 1) { console.log('no moves to undo'); }
+    if (!this.ignoringInput) {
+      this.currentNode = this.visitedNodes.pop();
+      this.moves.pop();
+      const newNodePx = this.getNodePx(this.currentNode[0], this.currentNode[1]);
+      this.pathString = this.pathString.substring(0, this.pathString.lastIndexOf('L'));
+      this.ignoreInput();
+      this.circle.animate({ cx: newNodePx[0], cy: newNodePx[1] }, this.delay);
+      this.path.animate({ d: this.pathString }, this.delay);
+    }
+  }
+
+
   getNodePx(x, y) {
     const nodeX = this.nodes[x][y].x;
     const nodeY = this.nodes[x][y].y;
@@ -272,82 +312,34 @@ export default class Grid {
   }
 
 
-  move(dir) {
-    let newNode;
-    if (dir === 'up')    { newNode = [this.currentNode[0], this.currentNode[1] - 1]; }
-    if (dir === 'down')  { newNode = [this.currentNode[0], this.currentNode[1] + 1]; }
-    if (dir === 'left')  { newNode = [this.currentNode[0] - 1, this.currentNode[1]]; }
-    if (dir === 'right') { newNode = [this.currentNode[0] + 1, this.currentNode[1]]; }
-
-
-    if (this.isValidNode(newNode[0], newNode[1], this.visitedNodes) && !this.ignoringInput) {
-      const newNodePx = this.getNodePx(newNode[0], newNode[1]);
-      this.visitedNodes.push([...this.currentNode]);
-      this.pathString += `L${newNodePx[0]},${newNodePx[1]}`;
-      this.moves.push(dir);
-      this.currentNode = newNode;
-      this.ignoreInput();
-      this.circle.animate({ cx: newNodePx[0], cy: newNodePx[1] }, this.delay);
-      this.path.animate({ d: this.pathString }, this.delay);
-    } else {
-      console.log('invalid position');
-      // TODO maybe add a visual indicator
-    }
-  }
-
-
-  undo() {
-    if (this.visitedNodes.length <= 1) { console.log('no moves to undo'); }
-    if (!this.ignoringInput) {
-      this.currentNode = this.visitedNodes.pop();
-      this.moves.pop();
-      const newNodePx = this.getNodePx(this.currentNode[0], this.currentNode[1]);
-      this.pathString = this.pathString.substring(0, this.pathString.lastIndexOf('L'));
-      this.ignoreInput();
-      this.circle.animate({ cx: newNodePx[0], cy: newNodePx[1] }, this.delay);
-      this.path.animate({ d: this.pathString }, this.delay);
-    }
-  }
 
   showGuide() {
-      // render the guide
-      this.guidePath = this.snap.path(this.getPathString(this.template.start, this.template.moves).pathString)
-          .attr({ fill: 'none', stroke: 'grey', strokeWidth: 20 });
+    // render the guide
+    this.guidePath = this.snap.path(this.getTemplate(this.template.start, this.template.moves).pathString)
+      .attr({ fill: 'none', stroke: 'grey', strokeWidth: 20 });
 
-      const guideCirclePx = this.getNodePx(...this.template.end);
+    const guideCirclePx = this.getNodePx(...this.template.end);
 
-      this.guideCircle = this.snap.circle(guideCirclePx[0], guideCirclePx[1])
-          .attr({ fill: 'grey', stroke: 'grey' });
+    this.guideCircle = this.snap.circle(guideCirclePx[0], guideCirclePx[1], 15)
+      .attr({ fill: 'grey', stroke: 'grey' });
 
-      this.guideVisible = true;
+    this.guideVisible = true;
+    this.redraw();
   }
 
   hideGuide() {
-      if (this.guidePath) { this.guidePath.remove(); }
-      if (this.guideCircle) { this.guideCircle.remove(); }
+    if (this.guidePath) { this.guidePath.remove(); }
+    if (this.guideCircle) { this.guideCircle.remove(); }
 
-      this.guideVisible = false;
-    }
+    this.guideVisible = false;
+    this.redraw();
+  }
 
   toggleShowGuide() {
-      if (this.guideVisible) {
-          // delete the guide SVG objects
-          this.guidePath.remove();
-          this.guideCircle.remove();
-          this.guideVisible = false;
-      } else {
-          // render the guides
-          this.guidePath = this.snap.path(this.getPathString(this.template.start, this.template.moves).pathString)
-              .attr({ fill: 'none', stroke: 'grey', strokeWidth: 20 });
-
-          const end = this.getPathString(this.template.start, this.template.moves).endNode;
-          const guideCirclePx = this.getNodePx(...end);
-
-          this.guideCircle = this.snap.circle(guideCirclePx[0], guideCirclePx[1], 20)
-              .attr({ fill: 'grey', stroke: 'grey' });
-
-          this.guideVisible = true;
-      }
-      this.redraw();
+    if (this.guideVisible) {
+      this.hideGuide();
+    } else {
+      this.showGuide();
+    }
   }
 }
