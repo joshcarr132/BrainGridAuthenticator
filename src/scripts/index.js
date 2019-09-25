@@ -23,19 +23,18 @@ $(document).ready(() => {
   socket.emit('ready', id);
 
   socket.on('db_response', (res) => {
-    if (res !== -1) {        // matching id FOUND in databse
-      // grid.setup(s, res);
-      // TODO: if createNew and database entry is found, ask whether to overwrite
-      dbResponse = res; // hold onto this in global scope to check against later
-      grid = new Grid(s, { template: res });
-      grid.setup();
-    } else {                 // matching id NOT FOUND in database
-        if (createNew) {
-          grid = new Grid({});
-          grid.setup();
-        } else {
-          // TODO: raise an error or something here
-        }
+    if (createMode) {
+      if (res !== -1) {
+        console.log('id already exists; overwriting');
+      } else {
+        initSessionCreate();
+      }
+    } else {
+      if (res === -1) {
+        // raise error
+      } else {
+        initSessionEnter();
+      }
     }
   });
 });
@@ -134,6 +133,12 @@ function checkPassword(password, input) {
     if (password[i] !== input[i]) {return false;}
   }
 
+  if (createMode && !grid.guideVisible) {
+    successCount++;
+    if (successCount >= 2) {
+      endSession();
+    }
+  }
   return true;
 }
 
@@ -148,5 +153,28 @@ function selectModePrompt() {
   } else {
     console.log('select a valid mode');
     selectModePrompt();
+  }
+}
+
+function initSessionCreate(length = 6) {
+  const successCount = 0;
+
+  grid = new Grid(s);
+
+  createMode = true;
+  grid.setup();
+  grid.showGuide();
+}
+
+
+function initSessionEnter() {
+  //placeholder
+}
+
+function endSession() {
+  //placeholder
+  if (createMode) {
+    dbEntry = {id: id, start: grid.start, moves: grid.moves};
+    socket.emit('create_success', dbEntry);
   }
 }

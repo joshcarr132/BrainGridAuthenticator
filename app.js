@@ -56,6 +56,8 @@ io.on('connection', (socket) => {
     });
 
     console.log(id);
+  socket.on('create_success', (dbEntry) => {
+    // send to db
   });
 
 
