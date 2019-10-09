@@ -21,6 +21,7 @@ $(document).ready(() => {
   socket.on('db_response', (res) => {
     if (createMode) {
       if (res !== -1) {
+        correctPwd = res;
         console.log('id already exists; overwriting');
       } else {
         initSessionCreate();
@@ -94,6 +95,10 @@ $(document).keypress((e) => {
 
     case 13: // enter
       console.log('checking password...');
+      if (createMode) {
+        correctPwd = grid.template;
+      }
+
       if (checkPassword(correctPwd.moves, grid.moves)) {
         console.log('successfully authenticated!');
       } else {
@@ -143,6 +148,7 @@ function selectModePrompt() {
   const mode = prompt('select mode:\n(c)reate new password | (e)nter a password');
   if (mode === 'c') {
     createMode = true;
+    let successCount = 0;
   } else if (mode === 'e') {
     createMode = false;
   } else {

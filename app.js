@@ -57,6 +57,8 @@ io.on('connection', (socket) => {
 
   socket.on('create_success', (dbEntry) => {
     // send to db
+    console.log('adding new entry to database');
+    collection.insert(dbEntry);
   });
 
   // CORTEX API
