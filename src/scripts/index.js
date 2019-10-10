@@ -21,8 +21,8 @@ $(document).ready(() => {
   socket.on('db_response', (res) => {
     if (createMode) {
       if (res !== -1) {
-        correctPwd = res;
         console.log('id already exists; overwriting');
+        initSessionCreate();
       } else {
         initSessionCreate();
       }
@@ -138,7 +138,10 @@ function checkPassword(password, input) {
     if (successCount >= 2) {
       endSession();
     }
+  } else { // enter mode
+    endSession();
   }
+
   return true;
 }
 
