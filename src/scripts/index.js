@@ -13,8 +13,8 @@ let id;
 
 // SETUP
 $(document).ready(() => {
-  selectModePrompt();
   s = Snap('#svg');
+  mainMenu();
 
   socket.emit('ready', id);
 
@@ -147,7 +147,7 @@ function checkPassword(password, input) {
 
 // a prompt window to select create mode or enter mode
 // placeholder until i build a proper ui for this
-function selectModePrompt() {
+function mainMenu() {
   const mode = prompt('select mode:\n(c)reate new password | (e)nter a password');
   id = parseInt(prompt('selected enter id: '));
 
@@ -157,7 +157,7 @@ function selectModePrompt() {
     createMode = false;
   } else {
     console.log('select a valid mode');
-    selectModePrompt();
+    mainMenu();
   }
 }
 
