@@ -148,7 +148,6 @@ function selectModePrompt() {
   const mode = prompt('select mode:\n(c)reate new password | (e)nter a password');
   if (mode === 'c') {
     createMode = true;
-    let successCount = 0;
   } else if (mode === 'e') {
     createMode = false;
   } else {
@@ -158,7 +157,7 @@ function selectModePrompt() {
 }
 
 function initSessionCreate(length = 6) {
-  const successCount = 0;
+  let successCount = 0;
 
   grid = new Grid(s);
 
