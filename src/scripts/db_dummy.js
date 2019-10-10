@@ -29,11 +29,9 @@ const insertDocuments = function(db, callback) {
 
   // add document
   collection.insertOne({
-    id: 99,
+    _id: 99,
     start: [2, 2],
     moves: ['left', 'up', 'right', 'right'],
-    circle: [3, 1],
-    pathString: 'M450,450L270,450L270,270L450,270L630,270',
   }, (err, result) => {
     assert.equal(err, null);
     console.log('Inserted document into the collection');
