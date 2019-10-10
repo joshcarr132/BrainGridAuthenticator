@@ -9,11 +9,11 @@ let s;
 let grid;
 let correctPwd;
 let createMode;
+let id;
 
 // SETUP
 $(document).ready(() => {
   selectModePrompt();
-  const id = prompt('enter id');
   s = Snap('#svg');
 
   socket.emit('ready', id);
@@ -149,6 +149,8 @@ function checkPassword(password, input) {
 // placeholder until i build a proper ui for this
 function selectModePrompt() {
   const mode = prompt('select mode:\n(c)reate new password | (e)nter a password');
+  id = parseInt(prompt('selected enter id: '));
+
   if (mode === 'c') {
     createMode = true;
   } else if (mode === 'e') {
@@ -177,7 +179,7 @@ function initSessionEnter() {
 function endSession() {
   //placeholder
   if (createMode) {
-    dbEntry = {id: id, start: grid.start, moves: grid.moves};
+    const dbEntry = {_id: id, start: grid.start, moves: grid.moves};
     socket.emit('create_success', dbEntry);
   }
 }

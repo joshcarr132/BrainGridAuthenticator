@@ -44,10 +44,8 @@ io.on('connection', (socket) => {
   });
 
   socket.on('ready', (id) => {
-    id = parseInt(id);
-      collection.findOne({ id }).then((doc) => {
-        console.log(doc);
-        if (doc) {
+    collection.find({ _id: id }).toArray().then((doc) => {
+        if (doc.length > 0) {
           socket.emit('db_response', doc);
         } else {
           socket.emit('db_response', -1);
