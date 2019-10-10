@@ -22,8 +22,7 @@ $(document).ready(() => {
   socket.on('db_response', (res) => {
     if (createMode) {
       if (res !== -1) {
-        console.log('id already exists; overwriting');
-        initSessionCreate();
+        console.log('id already exists! please choose another');
       } else {
         initSessionCreate();
       }
@@ -179,7 +178,6 @@ function initSessionEnter() {
 }
 
 function endSession() {
-  //placeholder
   if (createMode) {
     const dbEntry = {_id: id, start: grid.start, moves: grid.moves};
     socket.emit('create_success', dbEntry);
