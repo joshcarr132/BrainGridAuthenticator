@@ -10,6 +10,7 @@ let grid;
 let correctPwd;
 let createMode;
 let id;
+let successCount;
 
 // SETUP
 $(document).ready(() => {
@@ -139,7 +140,7 @@ function checkPassword(password, input) {
       endSession();
     }
   } else { // enter mode
-    endSession();
+    // endSession();
   }
 
   return true;
@@ -162,7 +163,8 @@ function mainMenu() {
 }
 
 function initSessionCreate(length = 6) {
-  let successCount = 0;
+  successCount = 0;
+  console.log('initializing "CREATE" session');
 
   grid = new Grid(s);
 
