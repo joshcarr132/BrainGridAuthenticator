@@ -19,21 +19,21 @@ $(document).ready(() => {
 
   socket.emit('ready', id);
 
-  socket.on('db_response', (res) => {
-    if (createMode) {
-      if (res !== -1) {
-        console.log('id already exists! please choose another');
-      } else {
-        initSessionCreate();
-      }
-    } else {
-      if (res === -1) {
-        // raise error
-      } else {
-        initSessionEnter();
-      }
-    }
-  });
+  // socket.on('db_response', (res) => {
+  //   if (createMode) {
+  //     if (res !== -1) {
+  //       console.log('id already exists! please choose another');
+  //     } else {
+  //       initSessionCreate();
+  //     }
+  //   } else {
+  //     if (res === -1) {
+  //       // raise error
+  //     } else {
+  //       initSessionEnter();
+  //     }
+  //   }
+  // });
 });
 
 // HANDLE INPUTS
@@ -57,7 +57,6 @@ $(document).keypress((e) => {
       break;
 
     case 32: // spacebar
-      // grid.redraw(s, { keepTemplate: true });
       grid.redraw(true);
       console.log('reinitializing...');
       break;
@@ -145,12 +144,11 @@ function checkPassword(password, input) {
   return true;
 }
 
-// a prompt window to select create mode or enter mode
-// placeholder until i build a proper ui for this
+// all functionality of choosing modes, entering/checking ids occurs here
+// first point of user interaction
 function mainMenu() {
-  const mode = prompt('select mode:\n(c)reate new password | (e)nter a password');
-  id = parseInt(prompt('selected enter id: '));
 
+  const mode = prompt('select mode:\n(c)reate new password | (e)nter a password');
   if (mode === 'c') {
     createMode = true;
   } else if (mode === 'e') {
@@ -159,6 +157,29 @@ function mainMenu() {
     console.log('select a valid mode');
     mainMenu();
   }
+
+
+  id = parseInt(prompt('selected enter id: '));
+  socket.emit('ready', id);
+
+  socket.on('db_response', (res) => {
+    if (createMode) {
+      if (res !== -1) { // db entry found for id
+        console.log('id already exists! please choose another');
+        mainMenu();
+      } else {
+        initSessionCreate();
+      }
+    } else { // enter mode
+      if (res === -1) { // db entry not found
+        console.log('id not found! try again');
+        mainMenu();
+      } else {
+        initSessionEnter();
+      }
+    }
+  });
+
 }
 
 function initSessionCreate(length = 6) {
