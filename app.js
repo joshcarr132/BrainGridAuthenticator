@@ -18,7 +18,7 @@ let connection;
 
 
 const commandBlock = require('./src/scripts/commandBlock.js');
-const Auth = require('./src/scripts/auth.js');
+// const Auth = require('./src/scripts/auth.js');
 
 let ctxClient;
 
