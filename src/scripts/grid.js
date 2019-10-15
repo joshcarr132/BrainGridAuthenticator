@@ -45,7 +45,7 @@ export default class Grid {
 
     if (this.options.template) {
       this.template = this.options.template;
-      this.start = this.template.start;
+      this.start = this.template[0].start;
     } else {
       this.createMode = true;
       this.assignNewTemplate(this.createRandomPath());
