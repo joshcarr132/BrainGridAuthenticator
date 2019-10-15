@@ -58,7 +58,6 @@ export default class Grid {
     this.vPadding = this.cellHeight / 2;
     this.centerX = this.width / 2;
     this.centerY = this.height / 2;
-    this.ignoringInput = true;
 
 
     // initialize svg objects
@@ -74,11 +73,15 @@ export default class Grid {
     this.moves = [];
     this.currentNode = this.start;
     this.guideVisible = false;
+
+
+    this.ignoringInput = true;
   }
 
 
   setup() {
     // create and render static elements
+    // create array of pixel values for all nodes
     this.ignoringInput = true;
 
     for (let i = 0; i <= this.xpoints - 1; i++) {
@@ -97,6 +100,9 @@ export default class Grid {
 
 
   redraw(reset = false) {
+    // redraw all dynamic elements (circle, lines)
+    // if reset = true, will reset everything to starting position
+
     if (this.path) { this.path.remove(); }
     if (this.circle) { this.circle.remove(); }
 
@@ -112,8 +118,8 @@ export default class Grid {
 
     // initialize path
     this.pathString = this.getTemplate(this.start, this.moves).pathString;
-
     const nodePx = this.getNodePx(...this.start);
+
     this.snap.circle(nodePx[0], nodePx[1], 10)
       .attr({ fill: this.lineColour, stroke: this.lineColour });
 
@@ -182,8 +188,9 @@ export default class Grid {
 
 
   getTemplate(startNode, moves) {
-    // return pathstring
-    const cx = this.getNodePx(...startNode);
+    // given a start node and a set of moves, return string of pixel locations
+    // of path and end node const cx = this.getNodePx(...startNode);
+
     let s = `M${cx[0]},${cx[1]}`;
     let newNode = startNode;
     let lastNode = startNode;
@@ -211,6 +218,7 @@ export default class Grid {
   createRandomPath(startNode = 'random', pathLength = 8, verbose = false) {
     // generate a random path of desired length and start point
     // uses dimensions of the current grid i.e., this.xpoints this.ypoints
+
     let start;
 
     if (startNode === 'random') {
@@ -311,7 +319,6 @@ export default class Grid {
       this.ignoringInput = false;
     }, delay + 50);
   }
-
 
 
   showGuide() {
