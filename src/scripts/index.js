@@ -159,7 +159,7 @@ function mainMenu() {
   }
 
 
-  id = parseInt(prompt('selected enter id: '));
+  id = parseInt(prompt('enter id: '));
   socket.emit('ready', id);
 
   socket.on('db_response', (res) => {
