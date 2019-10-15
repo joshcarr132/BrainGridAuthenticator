@@ -106,14 +106,17 @@ function checkPassword(password, input) {
     if (password[i] !== input[i]) {return false;}
   }
 
-  if (createMode && !grid.guideVisible) {
-    successCount++;
-    if (successCount >= 2) {
-      endSession();
+  if (createMode) {
+    if (!grid.guideVisible) {
+      successCount++;
+      if (successCount >= 2) {
+        endSession();
+      }
     }
   } else { // enter mode
     endSession();
   }
+
   return true;
 }
 
