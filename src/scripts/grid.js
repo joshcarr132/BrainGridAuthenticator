@@ -189,7 +189,9 @@ export default class Grid {
 
   getTemplate(startNode, moves) {
     // given a start node and a set of moves, return string of pixel locations
-    // of path and end node const cx = this.getNodePx(...startNode);
+    // of path and end node
+
+    const cx = this.getNodePx(...startNode);
 
     let s = `M${cx[0]},${cx[1]}`;
     let newNode = startNode;
