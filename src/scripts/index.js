@@ -9,6 +9,7 @@ let s;
 let grid;
 let correctPwd;
 let createMode;
+// let mode;
 let id;
 let successCount;
 
@@ -16,24 +17,6 @@ let successCount;
 $(document).ready(() => {
   s = Snap('#svg');
   mainMenu();
-
-  socket.emit('ready', id);
-
-  // socket.on('db_response', (res) => {
-  //   if (createMode) {
-  //     if (res !== -1) {
-  //       console.log('id already exists! please choose another');
-  //     } else {
-  //       initSessionCreate();
-  //     }
-  //   } else {
-  //     if (res === -1) {
-  //       // raise error
-  //     } else {
-  //       initSessionEnter();
-  //     }
-  //   }
-  // });
 });
 
 // HANDLE INPUTS
@@ -94,10 +77,9 @@ $(document).keypress((e) => {
 
     case 13: // enter
       console.log('checking password...');
-      if (createMode) {
-        correctPwd = grid.template;
-      }
+      // correctPwd = grid.template[0];
 
+      console.log(`correctPwd: ${correctPwd.moves}\ngrid.moves: ${grid.moves}`);
       if (checkPassword(correctPwd.moves, grid.moves)) {
         console.log('successfully authenticated!');
       } else {
@@ -147,55 +129,72 @@ function checkPassword(password, input) {
 // all functionality of choosing modes, entering/checking ids occurs here
 // first point of user interaction
 function mainMenu() {
+  id = 0;
+  let mode;
+  $('#svg').hide();
+  $('#menu').show();
 
-  const mode = prompt('select mode:\n(c)reate new password | (e)nter a password');
-  if (mode === 'c') {
-    createMode = true;
-  } else if (mode === 'e') {
-    createMode = false;
-  } else {
-    console.log('select a valid mode');
-    mainMenu();
-  }
+  $('#menu').on('submit', (event) => {
+    event.preventDefault();
+    mode = $("form input[type='radio']:checked").val();
+    id = parseInt($("form input[type='number']").val());
 
+    socket.emit('ready', id);
+    console.log('emit ready signal');
 
-  id = parseInt(prompt('enter id: '));
-  socket.emit('ready', id);
+    if (mode === 'create') {
+      createMode = true;
+    } else if (mode === 'enter') {
+      createMode = false;
+    }
+
+    return false;
+  });
 
   socket.on('db_response', (res) => {
+    console.log(res);
     if (createMode) {
       if (res !== -1) { // db entry found for id
         console.log('id already exists! please choose another');
-        mainMenu();
       } else {
         initSessionCreate();
       }
     } else { // enter mode
       if (res === -1) { // db entry not found
         console.log('id not found! try again');
-        mainMenu();
       } else {
-        initSessionEnter();
+        initSessionEnter(res);
       }
     }
   });
-
 }
 
+
 function initSessionCreate(length = 6) {
+  $('#menu').hide();
+  $('#svg').show();
+
   successCount = 0;
   console.log('initializing "CREATE" session');
 
   grid = new Grid(s);
+  correctPwd = grid.template;
 
-  createMode = true;
+  // createMode = true;
   grid.setup();
   grid.showGuide();
 }
 
 
-function initSessionEnter() {
-  //placeholder
+function initSessionEnter(template) {
+  $('#menu').hide();
+  $('#svg').show();
+
+  correctPwd = template[0];
+
+  grid = new Grid(s, {template});
+
+  grid.setup();
 }
 
 function endSession() {

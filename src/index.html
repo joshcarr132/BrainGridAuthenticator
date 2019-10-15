@@ -19,6 +19,20 @@
 </head>
 
 <body>
+  <form id="menu">
+
+    Select Mode:
+    <div id="modeselectradio">
+      <input name="modeselect" type="radio" value="create"/>Create a new password<br/>
+      <input name="modeselect" type="radio" value="enter"/>Enter a password<br/>
+    </div>
+
+    User ID:
+    <input name="" type="number" value="id"/>
+    <input name="" type="submit" value="Start"/>
+  </form>
+
+
   <svg id="svg"></svg>
 
   <script src="./lib/socket.io-client.js"></script>
