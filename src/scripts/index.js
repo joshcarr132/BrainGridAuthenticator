@@ -2,14 +2,13 @@ import Grid from './grid.js';
 
 /* eslint no-undef: 0 */
 /* eslint no-alert: 0 */
-const socket = io();
 
+const socket = io();
 
 let s;
 let grid;
 let correctPwd;
 let createMode;
-// let mode;
 let id;
 let successCount;
 
@@ -77,9 +76,7 @@ $(document).keypress((e) => {
 
     case 13: // enter
       console.log('checking password...');
-      // correctPwd = grid.template[0];
 
-      console.log(`correctPwd: ${correctPwd.moves}\ngrid.moves: ${grid.moves}`);
       if (checkPassword(correctPwd.moves, grid.moves)) {
         console.log('successfully authenticated!');
       } else {
@@ -98,11 +95,6 @@ $(document).keypress((e) => {
       }
       break;
   }
-  // console.log(grid.currentNode);
-  // console.log(grid.options.template.moves);
-  // console.log(grid.moves);
-  // console.log(grid.pathString);
-  // console.log(grid.visitedNodes);
 });
 
 
@@ -120,11 +112,11 @@ function checkPassword(password, input) {
       endSession();
     }
   } else { // enter mode
-    // endSession();
+    endSession();
   }
-
   return true;
 }
+
 
 // all functionality of choosing modes, entering/checking ids occurs here
 // first point of user interaction
@@ -180,19 +172,18 @@ function initSessionCreate(length = 6) {
   grid = new Grid(s);
   correctPwd = grid.template;
 
-  // createMode = true;
   grid.setup();
   grid.showGuide();
 }
-
 
 function initSessionEnter(template) {
   $('#menu').hide();
   $('#svg').show();
 
-  correctPwd = template[0];
+  console.log('initializing "ENTER" session');
 
   grid = new Grid(s, {template});
+  correctPwd = template[0];
 
   grid.setup();
 }
@@ -202,4 +193,6 @@ function endSession() {
     const dbEntry = {_id: id, start: grid.start, moves: grid.moves};
     socket.emit('create_success', dbEntry);
   }
+
+  grid.ignoringInput = true;
 }
