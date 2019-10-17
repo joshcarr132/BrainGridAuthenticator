@@ -54,13 +54,6 @@ class Cortex {
                 this.authToken = result.cortexToken;
             });
     }
-
-    createSession() {}
-    subscribe() {}
-    updateSession() {}
-    removeListener() {}
-    _log() {}
-
 }
 
 
