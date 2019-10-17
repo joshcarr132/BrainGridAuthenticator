@@ -16,7 +16,7 @@ let dbClient;
 let connection;
 
 
-
+const Auth = require('./src/scripts/auth.js');
 const commandBlock = require('./src/scripts/commandBlock.js');
 let ctxClient;
 

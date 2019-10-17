@@ -1,200 +1,89 @@
-/*
-  NodeJS wrapper for the Cortex API from Emotiv's example repository.
-  https://github.com/Emotiv/cortex-example
-*/
-
-/* eslint-disable */
-
-const EventEmitter = require('events');
 const WebSocket = require('ws');
+const CORTEX_URL = 'wss://localhost:6868';
 
-const CORTEX_URL = 'wss://emotivcortex.com:54321';
 
-const safeParse = (msg) => {
-  try {
-    return JSON.parse(msg);
-  } catch (_) {
-    return null;
-  }
-};
+class Cortex {
+    constructor(options = {}) {
+        process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0;
+        this.ws = new WebSocket(CORTEX_URL);
 
-if (global.process) {
-  global.process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
-}
+        this.messageId = 0;
 
-class JSONRPCError extends Error {
-  constructor(err) {
-    super(err.message);
-    this.name = this.constructor.name;
-    this.message = err.message;
-    this.code = err.code;
-  }
+        this.ws.addEventListener('close', () => {
+            this._log('ws: Socket closed');
+        });
 
-  toString() {
-    return `${super.toString()} (${this.code})`;
-  }
-}
+        this.ready = new Promise((resolve) => {
+            this.ws.addEventListener('open', resolve);
+        })
 
-class Cortex extends EventEmitter {
-  constructor(options = {}) {
-    super();
-    this.options = options;
-    // this.dev = options.dev !== null ? true : false;
-    // this.ws = this.dev ? new WebSocket(MOCK_URL) : new WebSocket(CORTEX_URL);
-    this.ws = new WebSocket(CORTEX_URL);
-    this.msgId = 0;
-    this.requests = {};
-    this.streams = {};
-    this.ws.addEventListener('message', this._onmsg.bind(this));
-    this.ws.addEventListener('close', () => {
-      this._log('ws: Socket closed');
-    });
-    this.verbose = options.verbose !== null ? options.verbose : 1;
-    this.handleError = (error) => {
-      throw new JSONRPCError(error);
-    };
-
-    this.ready = new Promise(
-      resolve => this.ws.addEventListener('open', resolve),
-      this.handleError,
-    )
-      .then(() => this._log('ws: Socket opened'))
-      .then(() => this.call('inspectApi'))
-      .then((methods) => {
-        for (const m of methods) this.defineMethod(m.methodName, m.params);
-        this._log(`rpc: Added ${methods.length} methods from inspectApi`);
-      });
-  }
-
-  _onmsg(msg) {
-    const data = safeParse(msg.data);
-    if (!data) return this._warn('unparseable message', msg);
-
-    this._debug('ws: <-', msg.data);
-
-    if ('id' in data) {
-      const { id } = data;
-      this._log(
-        `[${id}] <-`,
-        data.result ? 'success' : `error (${data.error.message})`,
-      );
-      if (this.requests[id]) {
-        this.requests[id](data.error, data.result);
-      } else {
-        this._warn('rpc: Got response for unknown id', id);
-      }
-    } else if ('sid' in data) {
-      const dataKeys = Object.keys(data).filter(
-        k => k !== 'sid' && k !== 'time' && Array.isArray(data[k]),
-      );
-      for (const k of dataKeys) {
-        this.emit(k, data) || this._warn('no listeners for stream event', k);
-      }
-    } else {
-      this._log('rpc: Unrecognised data', data);
+        .then(() => console.log('ws: Socket opened'));
     }
-    return null;
-  }
 
-  _warn(...msg) {
-    if (this.verbose > 0) console.warn('[Cortex WARN]', ...msg);
-  }
+    call(method, params = {}) {
+        const messageId = this.messageId++;
+        const request = {
+            "jsonrpc": "2.0",
+            "method": method,
+            "params": params,
+            "id": messageId,
+        };
 
-  _log(...msg) {
-    if (this.verbose > 1) console.warn('[Cortex LOG]', ...msg);
-  }
+        return new Promise((resolve, reject) => {
 
-  _debug(...msg) {
-    if (this.verbose > 2) console.warn('[Cortex DEBUG]', ...msg);
-  }
+            this.ws.send(JSON.stringify(request));
 
-  init({
-    username, password, client_id, client_secret, debit,
-  } = {}) {
-    return new Promise((resolve) => {
-      const result = this.getUserLogin()
-        .then((users) => {
-          if (users[0] && users[0] !== username) {
-            this._log('init: Logging out other user', users[0]);
-            return this.logout({ username: users[0] }).then(() => []);
-          }
-          if (username) {
-            this._log('init: Reusing existing login');
-          } else {
-            this._log('init: Logging in anonymously');
-          }
-          return users;
-        })
-        .then((users) => {
-          if (!users[0] && username && password) {
-            this._log('init: Logging in as', username);
-            return this.login({
-              username, password, client_id, client_secret,
+            this.ws.on('message', (data) => {
+                const response = JSON.parse(data);
+                if (response['id'] === messageId) {
+                    resolve(response['result']);
+                }
             });
-          }
-          return null;
-        })
-        .then(() => this.authorize({ client_id, client_secret, debit }))
-        .then(({ _auth }) => {
-          this._log('init: Got auth token');
-          this._debug('init: Auth token', _auth);
-          this._auth = _auth;
-        })
-        .then(() => { resolve(result); });
-    });
-  }
+        });
+    }
 
-  close() {
-    return new Promise((resolve) => {
-      this.ws.close();
-      this.ws.once('close', resolve);
-    });
-  }
+    authorize(auth) {
+        const params = {
+            clientId: auth.client_id,
+            clientSecret: auth.client_secret,
+            debit: 1,
+        };
 
-  call(method, params = {}) {
-    const id = this.msgId++;
-    const msg = JSON.stringify({
-      jsonrpc: '2.0', method, params, id,
-    });
-    this.ws.send(msg);
-    this._log(`[${id}] -> ${method}`);
+        this.call("authorize", params)
+            .then((result) => {
+                this.authToken = result.cortexToken;
+            });
+    }
 
-    this._debug('ws: ->', msg);
-    return new Promise((resolve, reject) => {
-      this.requests[id] = (err, data) => {
-        delete this.requests[id];
-        this._debug('rpc: err', err, 'data', data);
-        if (err) return reject(new JSONRPCError(err));
-        if (data) return resolve(data);
-        return reject(new Error('Invalid JSON-RPC response'));
-      };
-    });
-  }
+    createSession() {}
+    subscribe() {}
+    updateSession() {}
+    removeListener() {}
+    _log() {}
 
-  defineMethod(methodName, paramDefs = []) {
-    if (this[methodName]) return;
-    const needsAuth = paramDefs.some(p => p.name === '_auth');
-    console.log('method: ', methodName, ' needs auth: ', needsAuth);
-    const requiredParams = paramDefs.filter(p => p.required).map(p => p.name);
-
-    this[methodName] = (params = {}) => {
-      if (needsAuth && this._auth && !params._auth) {
-        params = Object.assign({}, params, { _auth: this._auth });
-      }
-      const missingParams = requiredParams.filter(p => params[p] == null);
-      if (missingParams.length > 0) {
-        return this.handleError(
-          new Error(
-            `Missing required params for ${methodName}: ${missingParams.join(
-              ', ',
-            )}`,
-          ),
-        );
-      }
-      return this.call(methodName, params);
-    };
-  }
 }
 
-module.exports = Cortex;
-Cortex.JSONRPCError = JSONRPCError;
+
+// test methods here
+const auth = require("./auth.js");
+const ctx = new Cortex();
+
+ctx.ready.then(() => {
+    ctx.call("getCortexInfo")
+          .then((result) => {
+              console.log(result);
+          });
+}).then(() => {
+    ctx.call("getUserLogin")
+        .then((result) => {
+            console.log(result);
+        });
+}).then(() => {
+    ctx.authorize(auth);
+}).then(() => {
+    ctx.call("queryHeadsets")
+        .then((result) => {
+            console.log(result);
+        });
+});
+
