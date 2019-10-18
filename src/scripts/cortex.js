@@ -147,12 +147,45 @@ class Cortex {
 
   closeSession() {
     this.log('ctx: closing session');
-    //
     return new Promise((resolve) => {
       resolve();
     });
   }
 
+  subscribe(streams = ['com']) {
+    // pass streams args as an array
+    return new Promise(() => {
+      const params = {
+        cortexToken: this.authToken,
+        session: this.sessionId,
+        streams,
+      };
+
+      this.call('subscribe', params)
+        .then(() => {
+          this.log(`ctx: subscribed to ${streams}`);
+          this.ws.on('message', (data) => {
+            this.log(data);
+          });
+        });
+    });
+  }
+
+  unsubscribe(streams = ['com']) {
+    // pass streams arg as an array
+    return new Promise(() => {
+      const params = {
+        cortexToken: this.authToken,
+        session: this.sessionId,
+        streams,
+      };
+
+      this.call('unsubscribe', params)
+        .then(() => {
+          this.log(`ctx: unsubscribed from ${streams}`);
+        });
+    });
+  }
 
   log(...msg) {
     if (this.options.verbose === true) {
