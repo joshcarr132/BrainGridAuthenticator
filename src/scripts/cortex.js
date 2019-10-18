@@ -1,5 +1,4 @@
 const WebSocket = require('ws');
-
 const CORTEX_URL = 'wss://localhost:6868';
 
 
