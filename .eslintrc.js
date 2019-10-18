@@ -23,6 +23,11 @@ module.exports = {
     'key-spacing': 0,
     'guard-for-in': 0,
     'no-multi-spaces': 0,
+    'no-param-reassign': 0,
+    'no-restricted-syntax': 0,
+    'prefer-destructuring': 0,
+    'no-use-before-define': 0,
+    'no-lonely-if': 0,
+    'radix': 0,
   },
-
 };

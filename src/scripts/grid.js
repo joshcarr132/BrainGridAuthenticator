@@ -9,7 +9,6 @@ const DELAY = 200;
 
 export default class Grid {
   constructor(snap, options) {
-
     this.snap = snap;
 
     if (!options) {
@@ -226,10 +225,10 @@ export default class Grid {
     if (startNode === 'random') {
       const x = Math.floor(Math.random() * this.xpoints);
       const y = Math.floor(Math.random() * this.ypoints);
-      startNode = [x, y];
+      start = [x, y];
+    } else {
+      start = startNode;
     }
-
-    start = startNode;
 
     const output = {};
     output.moves = [];

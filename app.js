@@ -13,12 +13,13 @@ const io = require('socket.io')(http);
 const dbURL = 'mongodb://localhost:27017';
 const dbName = 'bci-dev';
 let dbClient;
-let connection;
+let collection;
 
 
-const Auth = require('./src/scripts/auth.js');
-const commandBlock = require('./src/scripts/commandBlock.js');
-let ctxClient;
+// const Auth = require('./src/scripts/auth.js');
+// const commandBlock = require('./src/scripts/commandBlock.js');
+
+// let ctxClient;
 
 app.use('/', express.static(path.join(__dirname, '/src')));
 
@@ -43,13 +44,13 @@ io.on('connection', (socket) => {
 
   socket.on('ready', (id) => {
     collection.find({ _id: id }).toArray().then((doc) => {
-        if (doc.length > 0) {
-          socket.emit('db_response', doc);
-        } else {
-          socket.emit('db_response', -1);
-        }
-      });
+      if (doc.length > 0) {
+        socket.emit('db_response', doc);
+      } else {
+        socket.emit('db_response', -1);
+      }
     });
+  });
 
   socket.on('create_success', (dbEntry) => {
     // send to db

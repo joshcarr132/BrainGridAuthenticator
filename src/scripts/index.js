@@ -89,9 +89,9 @@ $(document).keypress((e) => {
 
     case 103: // g
       if (createMode) {
-          grid.toggleShowGuide();
+        grid.toggleShowGuide();
       } else {
-          console.log('cannot show guides in enter mode');
+        console.log('cannot show guides in enter mode');
       }
       break;
   }
@@ -103,7 +103,7 @@ function checkPassword(password, input) {
   if (password.length !== input.length) { return false; }
 
   for (let i = 0; i < password.length; i++) {
-    if (password[i] !== input[i]) {return false;}
+    if (password[i] !== input[i]) { return false; }
   }
 
   if (createMode) {
@@ -165,7 +165,7 @@ function mainMenu() {
 }
 
 
-function initSessionCreate(length = 6) {
+function initSessionCreate() {
   $('#menu').hide();
   $('#svg').show();
 
@@ -185,7 +185,7 @@ function initSessionEnter(template) {
 
   console.log('initializing "ENTER" session');
 
-  grid = new Grid(s, {template});
+  grid = new Grid(s, { template });
   correctPwd = template[0];
 
   grid.setup();
@@ -193,7 +193,7 @@ function initSessionEnter(template) {
 
 function endSession() {
   if (createMode) {
-    const dbEntry = {_id: id, start: grid.start, moves: grid.moves};
+    const dbEntry = { _id: id, start: grid.start, moves: grid.moves };
     socket.emit('create_success', dbEntry);
   }
 

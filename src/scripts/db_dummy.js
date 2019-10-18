@@ -1,4 +1,4 @@
-const MongoClient = require('mongodb').MongoClient;
+const { MongoClient } = require('mongodb');
 const assert = require('assert');
 
 // Connection URL
@@ -8,19 +8,8 @@ const url = 'mongodb://localhost:27017';
 const dbName = 'bci-dev';
 const client = new MongoClient(url, { useNewUrlParser: true });
 
-// Use connect method to connect to the server
-client.connect(function(err) {
-  assert.equal(null, err);
-  console.log("Connected successfully to server");
 
-  const db = client.db(dbName);
-
-  insertDocuments(db, function() {
-    client.close();
-  });
-});
-
-const insertDocuments = function(db, callback) {
+const insertDocuments = (db, callback) => {
   // Get the documents collection
   const collection = db.collection('passwords');
 
@@ -38,3 +27,16 @@ const insertDocuments = function(db, callback) {
     callback(result);
   });
 };
+
+
+// Use connect method to connect to the server
+client.connect((err) => {
+  assert.equal(null, err);
+  console.log('Connected successfully to server');
+
+  const db = client.db(dbName);
+
+  insertDocuments(db, () => {
+    client.close();
+  });
+});
