@@ -54,6 +54,7 @@ class Cortex {
   constructor(auth, options = {}) {
     this.options = options;
     this.auth = auth;
+    this.log('ctx: initializing Cortex object');
 
     process.env.NODE_TLS_REJECT_UNAUTHORIZED = 0;
     this.ws = new WebSocket(CORTEX_URL);
@@ -71,15 +72,15 @@ class Cortex {
   }
 
   call(method, params = {}) {
-    const messageId = this.messageId++;
-    const request = {
-      jsonrpc: '2.0',
-      method,
-      params,
-      id: messageId,
-    };
-
     return new Promise((resolve) => {
+      const messageId = this.messageId++;
+      const request = {
+        jsonrpc: '2.0',
+        method,
+        params,
+        id: messageId,
+      };
+
       const message = JSON.stringify(request);
       this.ws.send(message);
       this.log(`ws: sending[${messageId}: ${method}] ${message}`);
@@ -118,8 +119,8 @@ class Cortex {
       this.call('queryHeadsets')
         .then((result) => {
           const hsId = result[0].id;
-          this.headsetId = hsId;
           this.log(`ctx: assigning headsetId: ${hsId}`);
+          this.headsetId = hsId;
           resolve(hsId);
         });
     });
@@ -129,14 +130,6 @@ class Cortex {
     this.log('ctx: initializing session');
 
     return new Promise((resolve, reject) => {
-      if (this.authToken) {
-        this.authorize(this.auth)
-          .then((token) => {
-            this.initSession(token);
-            reject();
-          });
-      }
-
       const params = {
         cortexToken: this.authToken,
         status: 'open',
@@ -145,8 +138,8 @@ class Cortex {
 
       this.call('createSession', params)
         .then((result) => {
-          //
-          this.session = result;
+          this.log(`ctx: assigning sessionId: ${result.id}`);
+          this.sessionId = result.id;
           resolve(result);
         });
     });
@@ -184,33 +177,12 @@ const auth = require('./auth.js');
 
 const ctx = new Cortex(auth, { verbose: true });
 
-// ctx.ready.then(() => {
-//     ctx.call('getCortexInfo')
-//           .then((result) => {
-//               // console.log(result);
-//           });
-// }).then(() => {
-//     ctx.call('getUserLogin')
-//         .then((result) => {
-//             // console.log(result);
-//         });
-// }).then(() => {
-//     ctx.getHeadsetId()
-//         .then(() => {
-//             ctx.authorize(auth)
-//                 .then(() => {
-//                     ctx.initSession();
-//                 });
-//         });
-// })
-//     .then(() => {
-//     ctx.close();
-// });
-
 ctx.ready.then(() => {
   ctx.authorize().then(() => {
     ctx.getHeadsetId().then(() => {
-      ctx.initSession();
+      ctx.initSession().then(() => {
+        ctx.subscribe(['com']);
+      });
     });
   });
 });
