@@ -13,7 +13,7 @@
     accessed using:
       [method].then((result) => {
         *do something with result*
-      })
+      });
 
     Cortex.call(method, params) can be used to call any API method. Other
     methods are wrappers around Cortex.call().
