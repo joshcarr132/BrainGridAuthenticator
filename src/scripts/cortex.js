@@ -42,7 +42,6 @@
             });
           });
         });
-
 */
 
 const WebSocket = require('ws');
@@ -129,7 +128,7 @@ class Cortex {
   initSession() {
     this.log('ctx: initializing session');
 
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       const params = {
         cortexToken: this.authToken,
         status: 'open',
