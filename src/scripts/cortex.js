@@ -53,7 +53,6 @@ class Cortex {
   constructor(auth, options = {}) {
     this.options = options;
     this.auth = auth;
-    this.log('ctx: initializing Cortex object');
 
     process.env.NODE_TLS_REJECT_UNAUTHORIZED = 0;
     this.ws = new WebSocket(CORTEX_URL);
@@ -66,6 +65,7 @@ class Cortex {
     });
 
     this.ready = new Promise((resolve) => {
+      this.log('ctx: initialized Cortex object');
       this.ws.addEventListener('open', resolve);
     }).then(() => this.log('ws: Socket opened'));
   }
@@ -147,13 +147,25 @@ class Cortex {
   closeSession() {
     this.log('ctx: closing session');
     return new Promise((resolve) => {
+      this.unsubscribe()
+        .then(() => {
+          const params = {
+            cortexToken: this.authToken,
+            session: this.sessionId,
+            status: 'close',
+          };
+
+          this.call('updateSession', params);
+        });
       resolve();
     });
   }
 
   subscribe(streams = ['com']) {
     // pass streams args as an array
-    return new Promise(() => {
+    return new Promise((resolve) => {
+      this.streams = [];
+
       const params = {
         cortexToken: this.authToken,
         session: this.sessionId,
@@ -161,16 +173,22 @@ class Cortex {
       };
 
       this.call('subscribe', params)
-        .then(() => {
+        .then((response) => {
           this.log(`ctx: subscribed to ${streams}`);
           this.ws.on('message', (data) => {
-            this.log(data);
+            // this.log(data);
           });
+
+          response.success.forEach((stream) => {
+            this.streams.push(stream.streamName);
+          });
+
+          resolve(response);
         });
     });
   }
 
-  unsubscribe(streams = ['com']) {
+  unsubscribe(streams = this.streams) {
     // pass streams arg as an array
     return new Promise(() => {
       const params = {
@@ -181,6 +199,7 @@ class Cortex {
 
       this.call('unsubscribe', params)
         .then(() => {
+          // TODO remove from this.streams
           this.log(`ctx: unsubscribed from ${streams}`);
         });
     });
@@ -223,7 +242,7 @@ class Cortex {
     }
   }
 
-  close(force = false) {
+  closeSocket(force = false) {
     if (force) {
       this.ws.close();
     } else if (this.awaitingResponse === 0) {
@@ -232,7 +251,78 @@ class Cortex {
       setTimeout(() => { this.close(); }, 250);
     }
   }
+
+  commandBlock(blockId = 1, blockTime = 3000, threshold = 30) {
+    return new Promise((resolve, reject) => {
+      const blockData = {
+        // output: '',
+        blockId,
+        commands: {},
+      };
+
+
+      this.createSession({ auth: this.auth, status: 'open' })
+        .then(() => {
+          this.subscribe(['com']).then((subs) => {
+            if (subs.failure.length > 0) {
+              reject(new Error('failed to subscribe'));
+            }
+
+            this.ws.on('message', (msg) => {
+              msg = JSON.parse(msg);
+              if (msg.com) {
+                const act = msg.com[0];
+                const pow = msg.com[1];
+
+                this.log(`ctx_session: [command: ${act}, power: ${pow}]`);
+
+                if (!blockData.commands.hasOwnProperty(act)) {
+                  blockData.commands[act] = { count: 1, power: pow };
+                } else {
+                  blockData.commands[act].count++;
+                  blockData.commands[act].power += pow;
+                }
+
+                if (blockData.commands[act].power >= threshold) {
+                  this.closeSession();
+                  resolve(this.processBlock(blockData));
+                }
+
+                setTimeout(() => {
+                  this.closeSession();
+                  resolve(this.processBlock(blockData));
+                }, blockTime);
+              }
+            });
+          });
+        });
+    });
+  }
+
+  processBlock(block) {
+    this.log('ctx: command block ended');
+
+    let highestPower;
+
+    Object.keys(block.commands).forEach((key) => {
+    // block.commands.keys.forEach((key) => {
+      const command = block.commands[key];
+
+      if (!highestPower) {
+        highestPower = command;
+      } else if (command.power > highestPower.power) {
+        highestPower = command;
+      }
+
+      block.output = highestPower;
+
+      return block;
+    });
+  }
 }
+
+
+module.exports = Cortex;
 
 // test methods here
 const auth = require('./auth.js');
@@ -242,9 +332,7 @@ const ctx = new Cortex(auth, { verbose: true });
 ctx.ready.then(() => {
   ctx.authorize().then(() => {
     ctx.getHeadsetId().then(() => {
-      ctx.createSession().then(() => {
-        ctx.subscribe(['com']);
-      });
+      ctx.commandBlock();
     });
   });
 });
