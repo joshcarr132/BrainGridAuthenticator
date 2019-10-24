@@ -125,7 +125,7 @@ class Cortex {
     });
   }
 
-  initSession() {
+  createSession() {
     this.log('ctx: initializing session');
 
     return new Promise((resolve) => {
@@ -212,7 +212,7 @@ const ctx = new Cortex(auth, { verbose: true });
 ctx.ready.then(() => {
   ctx.authorize().then(() => {
     ctx.getHeadsetId().then(() => {
-      ctx.initSession().then(() => {
+      ctx.createSession().then(() => {
         ctx.subscribe(['com']);
       });
     });
