@@ -186,6 +186,36 @@ class Cortex {
     });
   }
 
+  loadProfile(profileName) {
+    // load a profile to use with the emotiv device
+    // if no profileName arg given, calls selectProfile TODO
+    // if any profile is currently loaded, it is unloaded first
+    return new Promise(() => {
+      const paramsUnload = {
+        cortexToken: this.authToken,
+        status: 'unload',
+        headset: this.headsetId,
+        profile: '',
+      };
+
+      const paramsLoad = {
+        cortexToken: this.authToken,
+        status: 'load',
+        profile: profileName,
+      };
+
+      this.call('setupProfile', paramsUnload)
+        .then(() => {
+          this.call('setupProfile', paramsLoad);
+        });
+    });
+  }
+
+  selectProfile() {
+    // list all profile names, allow user to select, then call loadProfile
+    // with the selected profile name
+  }
+
   log(...msg) {
     if (this.options.verbose === true) {
       console.log('-----');
