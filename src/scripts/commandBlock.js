@@ -48,7 +48,7 @@ function commandBlock(client, blockId = 1, blockTime = 8000, threshold = 30) {
 
         const onCom = (ev) => {
           const data = com2obj(ev.com);
-          client._log(data);
+          // client.log(data);
           if (!blockData.commands.hasOwnProperty(data.act)) {
             // check if command already stored
             // if (!Object.hasOwnProperty(blockData.commands, data.act)) {
@@ -72,7 +72,7 @@ function commandBlock(client, blockId = 1, blockTime = 8000, threshold = 30) {
 
         setTimeout(() => {
           // once command block initialized, start timer which will end the block
-          client._log('Command block ended');
+          client.log('Command block ended');
 
           // determine command by total (cumulative) power
           let highestPower = [];
@@ -86,7 +86,7 @@ function commandBlock(client, blockId = 1, blockTime = 8000, threshold = 30) {
             }
           });
 
-          client._log(
+          client.log(
             `Command: ${highestPower[0]}  |  power: ${highestPower[1]}`,
           );
           blockData.output = [highestPower[0], highestPower[1]];
@@ -97,7 +97,7 @@ function commandBlock(client, blockId = 1, blockTime = 8000, threshold = 30) {
             .then(() => {
               client.removeListener('com', onCom);
             });
-          // client._log(blockData);
+          // client.log(blockData);
           resolve(blockData);
         }, blockTime);
       })

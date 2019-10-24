@@ -25,7 +25,7 @@
         chained together starting with Cortex.ready.then(...)
       - Cortex.getHeadsetId() & Cortex.authorize() must be called before
         initializing a session
-      - Cortex.initSession() to start a session with the device
+      - Cortex.createSession() to start a session with the device
       - Cortex.subscribe([ streams ]) to subscribe to desired streams. Data
         events will be printed to the console as they come in.
 
@@ -36,7 +36,7 @@
         ctx.ready.then(() => {
           ctx.authorize().then(() => {
             ctx.getHeadsetId().then(() => {
-              ctx.initSession().then(() => {
+              ctx.createSession().then(() => {
                 ctx.subscribe(['com']);
               });
             });
