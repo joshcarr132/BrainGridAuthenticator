@@ -21,9 +21,9 @@
 
 */
 
-const WebSocket = require('ws');
-
 const CORTEX_URL = 'wss://localhost:6868';
+const WebSocket = require('ws');
+const chalk = require('chalk');
 
 
 class Cortex {
@@ -38,13 +38,13 @@ class Cortex {
     this.awaitingResponse = 0;
 
     this.ws.addEventListener('close', () => {
-      this.log('ws: Socket closed');
+      this.log('Socket closed');
     });
 
     this.ready = new Promise((resolve) => {
-      this.log('ctx: initialized Cortex object');
+      this.log('initialized Cortex object');
       this.ws.addEventListener('open', resolve);
-    }).then(() => this.log('ws: Socket opened'));
+    }).then(() => this.log('Socket opened'));
   }
 
   call(method, params = {}) {
@@ -59,13 +59,13 @@ class Cortex {
 
       const message = JSON.stringify(request);
       this.ws.send(message);
-      this.log(`ws: sending[${messageId}: ${method}] ${message}`);
+      this.log(`sending[${messageId}: ${method}]`);
       this.awaitingResponse++;
 
       this.ws.on('message', (data) => {
         const response = JSON.parse(data);
         if (response.id === messageId) {
-          this.log(`ws: received[${messageId}: ${method}] ${JSON.stringify(response)}`);
+          this.log(`received[${messageId}: ${method}]`);
           this.awaitingResponse--;
           resolve(response.result);
         }
@@ -84,7 +84,7 @@ class Cortex {
       this.call('authorize', params)
         .then((result) => {
           this.authToken = result.cortexToken;
-          this.log(`ctx: assigning authToken: ${result.cortexToken}`);
+          this.log(`assigning authToken: ${result.cortexToken.slice(0, 20)}...`);
           resolve(result.cortexToken);
         });
     });
@@ -103,7 +103,7 @@ class Cortex {
   }
 
   createSession() {
-    this.log('ctx: initializing session');
+    this.log('initializing session');
 
     return new Promise((resolve) => {
       const params = {
@@ -114,7 +114,7 @@ class Cortex {
 
       this.call('createSession', params)
         .then((result) => {
-          this.log(`ctx: assigning sessionId: ${result.id}`);
+          this.log(`assigning sessionId: ${result.id}`);
           this.sessionId = result.id;
           resolve(result);
         });
@@ -122,7 +122,7 @@ class Cortex {
   }
 
   closeSession() {
-    this.log('ctx: closing session');
+    this.log('closing session');
     return new Promise((resolve) => {
       this.unsubscribe()
         .then(() => {
@@ -151,10 +151,7 @@ class Cortex {
 
       this.call('subscribe', params)
         .then((response) => {
-          this.log(`ctx: subscribed to ${streams}`);
-          this.ws.on('message', (data) => {
-            // this.log(data);
-          });
+          this.log(`subscribed to ${streams}`);
 
           response.success.forEach((stream) => {
             this.streams.push(stream.streamName);
@@ -215,8 +212,8 @@ class Cortex {
 
   log(...msg) {
     if (this.options.verbose === true) {
+      console.log(`${chalk.cyan('[ctx]')} [${Date.now()}] | ${msg}`);
       console.log('-----');
-      console.log(...msg);
     }
   }
 
@@ -238,7 +235,6 @@ class Cortex {
         commands: {},
       };
 
-
       this.createSession({ auth: this.auth, status: 'open' })
         .then(() => {
           this.subscribe(['com']).then((subs) => {
@@ -252,7 +248,7 @@ class Cortex {
                 const act = msg.com[0];
                 const pow = msg.com[1];
 
-                this.log(`ctx_session: [command: ${act}, power: ${pow}]`);
+                this.log(`[command: ${act}, power: ${pow}]`);
 
                 if (!blockData.commands.hasOwnProperty(act)) {
                   blockData.commands[act] = { count: 1, power: pow };
@@ -278,7 +274,7 @@ class Cortex {
   }
 
   processBlock(block) {
-    this.log('ctx: command block ended');
+    this.log('command block ended');
 
     let highestPower;
 
