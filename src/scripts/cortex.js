@@ -183,6 +183,7 @@ class Cortex {
   }
 
   loadProfile(profileName) {
+    // TODO TEST
     // load a profile to use with the emotiv device
     // if no profileName arg given, calls selectProfile TODO
     // if any profile is currently loaded, it is unloaded first
@@ -232,7 +233,7 @@ class Cortex {
   commandBlock(blockId = 1, blockTime = 3000, threshold = 30) {
     return new Promise((resolve, reject) => {
       const blockData = {
-        // output: '',
+        output: '',
         blockId,
         commands: {},
       };
@@ -282,7 +283,6 @@ class Cortex {
     let highestPower;
 
     Object.keys(block.commands).forEach((key) => {
-    // block.commands.keys.forEach((key) => {
       const command = block.commands[key];
 
       if (!highestPower) {
@@ -298,18 +298,4 @@ class Cortex {
   }
 }
 
-
 module.exports = Cortex;
-
-// test methods here
-const auth = require('./auth.js');
-
-const ctx = new Cortex(auth, { verbose: true });
-
-ctx.ready.then(() => {
-  ctx.authorize().then(() => {
-    ctx.getHeadsetId().then(() => {
-      ctx.commandBlock();
-    });
-  });
-});

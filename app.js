@@ -6,30 +6,33 @@ const express = require('express');
 const MongoClient = require('mongodb').MongoClient;
 
 
-// init express and websocket
+// express and websocket
 const app = express();
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
 
 
-// init mongodb
+// mongodb
 const dbURL = 'mongodb://localhost:27017';
 const dbName = 'bci-dev';
 let dbClient;
 let collection;
 
 
-// const Auth = require('./src/scripts/auth.js');
-// const commandBlock = require('./src/scripts/commandBlock.js');
+// cortex api
+const auth = require('./src/scripts/auth.js');
+const Cortex = require('./src/scripts/cortex.js');
 
-// let ctxClient;
 
+// setup paths for express
 app.use('/', express.static(path.join(__dirname, '/src')));
 
 app.get('/', (req, res) => {
   res.sendFile(path.resolve(__dirname, '/src/index.html'));
 });
 
+
+// main
 io.on('connection', (socket) => {
   log('web client connected');
   socket.on('disconnect', () => {
@@ -46,6 +49,7 @@ io.on('connection', (socket) => {
   });
 
   socket.on('ready', (id) => {
+    // query db
     collection.find({ _id: id }).toArray().then((doc) => {
       if (doc.length > 0) {
         socket.emit('db_response', doc);

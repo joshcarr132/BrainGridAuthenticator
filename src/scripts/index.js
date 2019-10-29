@@ -135,7 +135,6 @@ function mainMenu() {
     id = parseInt($("form input[type='number']").val());
 
     socket.emit('ready', id);
-    console.log('emit ready signal');
 
     if (mode === 'create') {
       createMode = true;
