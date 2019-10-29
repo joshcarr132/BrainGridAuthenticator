@@ -1,3 +1,6 @@
+const verbose = true; // set true to have this module output debugging messages to the console
+const chalk = require('chalk'); // for colorizing console output
+
 const path = require('path');
 const express = require('express');
 const MongoClient = require('mongodb').MongoClient;
@@ -28,16 +31,16 @@ app.get('/', (req, res) => {
 });
 
 io.on('connection', (socket) => {
-  console.log('web client connected');
+  log('web client connected');
   socket.on('disconnect', () => {
-    console.log('web client disconnected');
+    log('web client disconnected');
   });
 
   // initialize db connection
   dbClient = new MongoClient(dbURL);
   dbClient.connect((err) => {
     if (err) { throw new Error(err); }
-    console.log(`Connected to mongodb server at: ${dbURL}`);
+    log(`connected to mongodb server at: ${dbURL}`);
     const db = dbClient.db(dbName);
     collection = db.collection('passwords');
   });
@@ -77,5 +80,12 @@ io.on('connection', (socket) => {
 });
 
 http.listen(3000, () => {
-  console.log('listening on *:3000');
+  log('listening on *:3000');
 });
+
+function log(...msg) {
+  if (verbose) {
+    console.log(`${chalk.green('[app]')} ${msg}`);
+    console.log('-----');
+  }
+}

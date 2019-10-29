@@ -1,4 +1,5 @@
 /* Wrapper class for Emotiv Cortex V2 API
+   https://emotiv.gitbook.io/cortex-api/
 
   constructor args:
     auth    => JSON object with client ID and secret
@@ -18,30 +19,6 @@
     Cortex.call(method, params) can be used to call any API method. Other
     methods are wrappers around Cortex.call().
 
-    The basic flow to get data from the Emotiv device is this:
-      - Create Cortex object, passing in API credentials as auth
-      - Cortex.ready Promise resolves once websocket has been initialized--no
-        API calls can occur before this. Therefore all API calls should be
-        chained together starting with Cortex.ready.then(...)
-      - Cortex.getHeadsetId() & Cortex.authorize() must be called before
-        initializing a session
-      - Cortex.createSession() to start a session with the device
-      - Cortex.subscribe([ streams ]) to subscribe to desired streams. Data
-        events will be printed to the console as they come in.
-
-    Example of subscribing to mental commands ('com') stream:
-        const auth = require('./auth.js');
-        const ctx = new Cortex(auth, { verbose: true });
-
-        ctx.ready.then(() => {
-          ctx.authorize().then(() => {
-            ctx.getHeadsetId().then(() => {
-              ctx.createSession().then(() => {
-                ctx.subscribe(['com']);
-              });
-            });
-          });
-        });
 */
 
 const WebSocket = require('ws');
