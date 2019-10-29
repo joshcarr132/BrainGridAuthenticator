@@ -77,13 +77,21 @@ io.on('connection', (socket) => {
     });
   });
 
+  // send successfully created password to database
   socket.on('create_success', (dbEntry) => {
-    // send to db
-    console.log('adding new entry to database');
-    collection.insertOne(dbEntry);
+    collection.findOne({ _id: dbEntry._id }).then((doc) => {
+      if (!doc) {
+        log('adding new entry to database');
+        log(JSON.stringify(dbEntry));
+        collection.insertOne(dbEntry);
+      } else {
+        log('id already in database. aborting.');
+      }
+    });
   });
 });
 
+// start listening
 http.listen(3000, () => {
   log('listening on *:3000');
 });
