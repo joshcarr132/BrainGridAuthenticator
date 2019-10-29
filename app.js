@@ -40,7 +40,7 @@ io.on('connection', (socket) => {
   });
 
   // initialize db connection
-  dbClient = new MongoClient(dbURL);
+  dbClient = new MongoClient(dbURL, { useNewUrlParser: true });
   dbClient.connect((err) => {
     if (err) { throw new Error(err); }
     log(`connected to mongodb server at: ${dbURL}`);
