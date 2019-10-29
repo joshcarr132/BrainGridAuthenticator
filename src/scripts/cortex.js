@@ -236,7 +236,7 @@ class Cortex {
 
   log(...msg) {
     if (this.options.verbose === true) {
-      console.log(`${chalk.cyan('[ctx]')} [${Date.now()}] | ${msg}`);
+      console.log(`${chalk.cyan('[ctx]')} ${msg}`);
       console.log('-----');
     }
   }
