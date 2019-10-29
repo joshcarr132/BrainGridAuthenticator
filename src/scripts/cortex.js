@@ -104,15 +104,19 @@ class Cortex {
   }
 
   getHeadsetId() {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       this.call('queryHeadsets')
         .then((result) => {
-          const hsId = result[0].id;
-          this.log(`ctx: assigning headsetId: ${hsId}`);
-          this.headsetId = hsId;
-          resolve(hsId);
+          if (result[0]) { // headset was found
+            const hsId = result[0].id;
+            this.log(`assigning headsetId: ${hsId}`);
+            this.headsetId = hsId;
+            resolve(hsId);
+          } else {
+            reject(new Error('no connected headset was found'));
+          }
         });
-    });
+    }).catch((error) => { this.log(error); });
   }
 
   createSession() {
