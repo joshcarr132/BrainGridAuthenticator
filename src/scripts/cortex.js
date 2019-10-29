@@ -149,9 +149,13 @@ class Cortex {
             status: 'close',
           };
 
-          this.call('updateSession', params);
+          this.call('updateSession', params)
+            .then(() => {
+              this.log('session closed');
+              resolve();
+            });
         });
-      resolve();
+      // resolve();
     });
   }
 
@@ -181,7 +185,7 @@ class Cortex {
 
   unsubscribe(streams = this.streams) {
     // pass streams arg as an array
-    return new Promise(() => {
+    return new Promise((resolve) => {
       const params = {
         cortexToken: this.authToken,
         session: this.sessionId,
@@ -189,9 +193,12 @@ class Cortex {
       };
 
       this.call('unsubscribe', params)
-        .then(() => {
-          // TODO remove from this.streams
-          this.log(`ctx: unsubscribed from ${streams}`);
+        .then((result) => {
+          if (result.failure.length === 0) {
+            this.streams = [];
+            this.log(`unsubscribed from ${JSON.stringify(result.success)}`);
+            resolve(result);
+          }
         });
     });
   }
@@ -278,13 +285,13 @@ class Cortex {
                   this.closeSession();
                   resolve(this.processBlock(blockData));
                 }
-
-                setTimeout(() => {
-                  this.closeSession();
-                  resolve(this.processBlock(blockData));
-                }, blockTime);
               }
             });
+
+            setTimeout(() => {
+              this.closeSession();
+              resolve(this.processBlock(blockData));
+            }, blockTime);
           });
         });
     });
