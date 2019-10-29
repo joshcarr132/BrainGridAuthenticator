@@ -73,6 +73,19 @@ class Cortex {
     });
   }
 
+  initialize() {
+    //
+    return new Promise((resolve) => {
+      this.ready.then(() => {
+        this.authorize().then(() => {
+          this.getHeadsetId().then(() => {
+            resolve(this);
+          });
+        });
+      });
+    });
+  }
+
   authorize(auth = this.auth) {
     return new Promise((resolve) => {
       const params = {
