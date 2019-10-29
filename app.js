@@ -57,6 +57,24 @@ io.on('connection', (socket) => {
         socket.emit('db_response', -1);
       }
     });
+
+    // initialize + setup cortex client
+    const ctxClient = new Cortex(auth, { verbose: true });
+
+    ctxClient.ready.then(() => {
+      ctxClient.authorize().then(() => {
+        ctxClient.getHeadsetId();
+      });
+    });
+
+    // initialize command blocks
+    socket.on('initCmdBlock', () => {
+      ctxClient.log('ctx: initializing command block');
+      ctxClient.commandBlock(ctxClient)
+        .then((data) => {
+          socket.emit('command', data);
+        });
+    });
   });
 
   socket.on('create_success', (dbEntry) => {
@@ -64,23 +82,6 @@ io.on('connection', (socket) => {
     console.log('adding new entry to database');
     collection.insertOne(dbEntry);
   });
-
-  // CORTEX API
-  // socket.on('ready', () => {
-  //   commandBlock.initClient(Auth)
-  //     .then((ctxClient) => {
-  //       console.log(`client: ${ctxClient}`);
-  //     });
-  //   // .then(() => { commandBlock.loadTrainingProfile(ctxClient); });
-  // });
-
-  // socket.on('initCmdBlock', () => {
-  //   console.log('init command block');
-  //   commandBlock.commandBlock(ctxClient)
-  //     .then((data) => {
-  //       socket.emit('command', data.output); // send command back to browser client
-  //     });
-  // });
 });
 
 http.listen(3000, () => {
