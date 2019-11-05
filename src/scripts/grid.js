@@ -1,10 +1,10 @@
 // DEFAULTS
-const WIDTH = 900;
-const HEIGHT = 900;
+const WIDTH      = 900;
+const HEIGHT     = 900;
 const LINECOLOUR = 'coral';
-const XPOINTS = 5;
-const YPOINTS = 5;
-const DELAY = 200;
+const XPOINTS    = 5;
+const YPOINTS    = 5;
+const DELAY      = 200;
 
 
 export default class Grid {
@@ -19,27 +19,39 @@ export default class Grid {
 
     if (this.options.width) {
       this.width = this.options.width;
-    } else { this.width = WIDTH; }
+    } else {
+      this.width = WIDTH;
+    }
 
     if (this.options.height) {
       this.height = this.options.height;
-    } else { this.height = HEIGHT; }
+    } else {
+      this.height = HEIGHT;
+    }
 
     if (this.options.lineColour) {
       this.lineColour = this.options.lineColour;
-    } else { this.lineColour = LINECOLOUR; }
+    } else {
+      this.lineColour = LINECOLOUR;
+    }
 
     if (this.options.delay) {
       this.delay = this.options.delay;
-    } else { this.delay = DELAY; }
+    } else {
+      this.delay = DELAY;
+    }
 
     if (this.options.xpoints) {
       this.xpoints = this.options.xpoints;
-    } else { this.xpoints = XPOINTS; }
+    } else {
+      this.xpoints = XPOINTS;
+    }
 
     if (this.options.ypoints) {
       this.ypoints = this.options.ypoints;
-    } else { this.ypoints = YPOINTS; }
+    } else {
+      this.ypoints = YPOINTS;
+    }
 
 
     if (this.options.template) {
@@ -51,26 +63,26 @@ export default class Grid {
     }
 
     // calculate geometry
-    this.cellWidth = this.width / this.xpoints;
+    this.cellWidth  = this.width / this.xpoints;
     this.cellHeight = this.height / this.ypoints;
-    this.hPadding = this.cellWidth / 2;
-    this.vPadding = this.cellHeight / 2;
-    this.centerX = this.width / 2;
-    this.centerY = this.height / 2;
+    this.hPadding   = this.cellWidth / 2;
+    this.vPadding   = this.cellHeight / 2;
+    this.centerX    = this.width / 2;
+    this.centerY    = this.height / 2;
 
 
     // initialize svg objects
-    this.s = null;
+    this.s          = null;
     this.pathString = '';
-    this.path = null;
-    this.circle = null;
+    this.path       = null;
+    this.circle     = null;
 
 
     // initialize grid objects
-    this.nodes = [];
+    this.nodes        = [];
     this.visitedNodes = [];
-    this.moves = [];
-    this.currentNode = this.start;
+    this.moves        = [];
+    this.currentNode  = this.start;
     this.guideVisible = false;
 
 
@@ -107,17 +119,17 @@ export default class Grid {
 
     if (reset) {
       this.visitedNodes = [];
-      this.moves = [];
-      this.currentNode = this.start;
+      this.moves        = [];
+      this.currentNode  = this.start;
       this.visitedNodes.push(this.currentNode);
 
-      if (this.path) { this.path.remove(); }
+      if (this.path)   { this.path.remove(); }
       if (this.circle) { this.circle.remove(); }
     }
 
     // initialize path
     this.pathString = this.getTemplate(this.start, this.moves).pathString;
-    const nodePx = this.getNodePx(...this.start);
+    const nodePx    = this.getNodePx(...this.start);
 
     this.snap.circle(nodePx[0], nodePx[1], 10)
       .attr({ fill: this.lineColour, stroke: this.lineColour });
@@ -127,11 +139,11 @@ export default class Grid {
 
     // circle position indicator
     const circlePx = this.getNodePx(this.currentNode[0], this.currentNode[1]);
-    this.circle = this.snap.circle(circlePx[0], circlePx[1], 30)
+    this.circle    = this.snap.circle(circlePx[0], circlePx[1], 30)
       .attr({
-        fill: this.lineColour,
-        stroke: this.lineColour,
-        strokeWidth: 10,
+        fill:          this.lineColour,
+        stroke:        this.lineColour,
+        strokeWidth:   10,
         strokeOpacity: 0.3,
       });
 
@@ -192,15 +204,15 @@ export default class Grid {
 
     const cx = this.getNodePx(...startNode);
 
-    let s = `M${cx[0]},${cx[1]}`;
-    let newNode = startNode;
+    let s        = `M${cx[0]},${cx[1]}`;
+    let newNode  = startNode;
     let lastNode = startNode;
 
     // TODO: make function
     moves.forEach((move) => {
-      if (move === 'up') { newNode = [lastNode[0], lastNode[1] - 1]; }
-      if (move === 'down') { newNode = [lastNode[0], lastNode[1] + 1]; }
-      if (move === 'left') { newNode = [lastNode[0] - 1, lastNode[1]]; }
+      if (move === 'up')    { newNode = [lastNode[0], lastNode[1] - 1]; }
+      if (move === 'down')  { newNode = [lastNode[0], lastNode[1] + 1]; }
+      if (move === 'left')  { newNode = [lastNode[0] - 1, lastNode[1]]; }
       if (move === 'right') { newNode = [lastNode[0] + 1, lastNode[1]]; }
 
       const newNodePx = this.getNodePx(...newNode);
@@ -236,15 +248,15 @@ export default class Grid {
 
     // TODO: need a function for this!
     const moveOptions = {
-      up  : [0, -1],
-      down  : [0, 1],
-      left    : [-1, 0],
-      right : [1, 0],
+      up   : [0, -1],
+      down : [0, 1],
+      left : [-1, 0],
+      right: [1, 0],
     };
 
-    const visited = [];
+    const visited  = [];
     const deadEnds = [];
-    const matrix = [];
+    const matrix   = [];
 
     for (let i = 0; i < this.xpoints; i++) {
       matrix[i] = new Array(this.ypoints).fill(0);
@@ -337,7 +349,7 @@ export default class Grid {
   }
 
   hideGuide() {
-    if (this.guidePath) { this.guidePath.remove(); }
+    if (this.guidePath)   { this.guidePath.remove(); }
     if (this.guideCircle) { this.guideCircle.remove(); }
 
     this.guideVisible = false;
