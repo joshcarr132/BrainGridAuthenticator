@@ -24,21 +24,26 @@
       width: 900px;
       height: 900px;
     }
+
+    .menuItem {
+      padding: 10px 20px 5px 20px;
+    }
   </style>
 </head>
 
 <body>
   <form id="menu">
 
-    Select Mode:
-    <div id="modeselectradio">
-      <input name="modeselect" type="radio" value="create"/>Create a new password<br/>
-      <input name="modeselect" type="radio" value="enter"/>Enter a password<br/>
+    <div class="menuItem">Select Mode:
+      <div id="modeselectradio" class="menuItem">
+        <input name="modeselect" type="radio" value="create"/>Create a new password<br/>
+        <input name="modeselect" type="radio" value="enter"/>Enter a password<br/>
+      </div>
     </div>
-
-    User ID:
-    <input name="" type="number" value="id"/>
-    <input name="" type="submit" value="Start"/>
+    <div class="menuItem">User ID:
+      <input name="" type="number" value="id"/>
+      <input name="" type="submit" value="Start"/>
+    </div>
   </form>
 
 
