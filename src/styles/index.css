@@ -1,0 +1,22 @@
+.menuItem {
+    padding: 10px 20px 5px 20px;
+}
+
+#svg {
+    width: 900px;
+    height: 900px;
+    background-color: whitesmoke;
+    text-align: center;
+    display: block;
+    margin: auto;
+}
+
+#menu {
+    padding: 30% 20%;
+    font-size: 18pt;
+    font-family: sans-serif;
+    background-color: whitesmoke;
+    width: 900px;
+    height: 900px;
+}
+
