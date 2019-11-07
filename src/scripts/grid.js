@@ -1,9 +1,9 @@
 // DEFAULTS
-const WIDTH      = 700;
-const HEIGHT     = 700;
+const WIDTH      = 500;
+const HEIGHT     = 500;
 const LINECOLOUR = 'coral';
-const XPOINTS    = 8;
-const YPOINTS    = 8;
+const XPOINTS    = 5;
+const YPOINTS    = 5;
 const DELAY      = 200;
 
 
@@ -94,6 +94,7 @@ export default class Grid {
     // create and render static elements
     // create array of pixel values for all nodes
     this.ignoringInput = true;
+    this.snap.attr({ width: this.width, height: this.height });
 
     for (let i = 0; i <= this.xpoints - 1; i++) {
       const row = [];
