@@ -1,9 +1,9 @@
 // DEFAULTS
-const WIDTH      = 900;
-const HEIGHT     = 900;
+const WIDTH      = 700;
+const HEIGHT     = 700;
 const LINECOLOUR = 'coral';
-const XPOINTS    = 5;
-const YPOINTS    = 5;
+const XPOINTS    = 8;
+const YPOINTS    = 8;
 const DELAY      = 200;
 
 
@@ -223,7 +223,6 @@ export default class Grid {
     });
 
     // the last point assigned to lastNode will be the end node of the path
-
     return { pathString: s, endNode: lastNode };
   }
 
@@ -337,7 +336,7 @@ export default class Grid {
   showGuide() {
     // render the guide
     this.guidePath = this.snap.path(this.getTemplate(this.template.start, this.template.moves).pathString)
-      .attr({ fill: 'none', stroke: 'grey', strokeWidth: 20 });
+      .attr({ fill: 'none', stroke: 'grey', strokeWidth: 25 });
 
     const guideCirclePx = this.getNodePx(...this.template.end);
 
