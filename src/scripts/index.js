@@ -14,6 +14,11 @@ let successCount;
 
 // SETUP
 $(document).ready(() => {
+  // setup interface buttons
+  $('#undoButton').click(() => { grid.undo(); });
+  $('#resetButton').click(() => { grid.redraw(true); });
+  $('#submitButton').click(() => { checkPassword(); });
+
   s = Snap('#svg');
   mainMenu();
 });
