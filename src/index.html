@@ -23,9 +23,13 @@
   </form>
 
 
-  <svg id="svg"></svg>
-  <div id="legend">
-    Enter/Return:   Submit Password
+  <div id="mainInterface">
+    <svg id="svg"></svg>
+    <div id="interfaceButtons">
+      <input id="undoButton" name="undo" type="button" value="Undo"/>
+      <input id="resetButton" name="reset" type="button" value="Reset"/>
+      <input id="submitButton" name="submit" type="button" value="Submit"/>
+    </div>
   </div>
 
   <script src="./lib/socket.io-client.js"></script>

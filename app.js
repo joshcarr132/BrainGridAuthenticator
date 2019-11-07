@@ -59,22 +59,22 @@ io.on('connection', (socket) => {
     });
 
     // initialize + setup cortex client
-    const ctxClient = new Cortex(auth, { verbose: true });
+    // const ctxClient = new Cortex(auth, { verbose: true });
 
-    ctxClient.ready.then(() => {
-      ctxClient.authorize().then(() => {
-        ctxClient.getHeadsetId();
-      });
-    });
+    // ctxClient.ready.then(() => {
+    //   ctxClient.authorize().then(() => {
+    //     ctxClient.getHeadsetId();
+    //   });
+    // });
 
-    // initialize command blocks
-    socket.on('initCmdBlock', () => {
-      ctxClient.log('ctx: initializing command block');
-      ctxClient.commandBlock(ctxClient)
-        .then((data) => {
-          socket.emit('command', data);
-        });
-    });
+    // // initialize command blocks
+    // socket.on('initCmdBlock', () => {
+    //   ctxClient.log('ctx: initializing command block');
+    //   ctxClient.commandBlock(ctxClient)
+    //     .then((data) => {
+    //       socket.emit('command', data);
+    //     });
+    // });
   });
 
   // send successfully created password to database

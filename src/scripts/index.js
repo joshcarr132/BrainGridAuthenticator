@@ -126,7 +126,7 @@ function checkPassword(password, input) {
 function mainMenu() {
   id = 0;
   let mode;
-  $('#svg').hide();
+  $('#mainInterface').hide();
   $('#menu').show();
 
   $('#menu').on('submit', (event) => {
@@ -166,12 +166,17 @@ function mainMenu() {
 
 function initSessionCreate() {
   $('#menu').hide();
-  $('#svg').show();
+  $('#mainInterface').show();
 
   successCount = 0;
   console.log('initializing "CREATE" session');
 
-  grid = new Grid(s);
+  grid = new Grid(s, {
+    height:   600,
+    width:    600,
+    xpoints:  6,
+    ypoints : 6,
+  });
   correctPwd = grid.template;
 
   grid.setup();
@@ -180,7 +185,7 @@ function initSessionCreate() {
 
 function initSessionEnter(template) {
   $('#menu').hide();
-  $('#svg').show();
+  $('#mainInterface').show();
 
   console.log('initializing "ENTER" session');
 
