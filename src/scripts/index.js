@@ -10,7 +10,13 @@ let grid;
 let correctPwd;
 let createMode;
 let id;
-let successCount;
+let session;
+
+// grid dimensions
+const xpoints = 7;
+const ypoints = 7;
+const width = 600;
+const height = 600;
 
 // SETUP
 $(document).ready(() => {
