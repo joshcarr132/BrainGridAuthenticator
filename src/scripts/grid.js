@@ -59,7 +59,7 @@ export default class Grid {
       this.start = this.template[0].start;
     } else {
       this.createMode = true;
-      this.assignNewTemplate(this.createRandomPath());
+      this.assignNewTemplate(this.createRandomPath('center'));
     }
 
     // calculate geometry
@@ -238,9 +238,14 @@ export default class Grid {
       const x = Math.floor(Math.random() * this.xpoints);
       const y = Math.floor(Math.random() * this.ypoints);
       start = [x, y];
+    } else if (startNode === 'center') {
+      const x = Math.floor(this.xpoints / 2);
+      const y = Math.floor(this.ypoints / 2);
+      start = [x, y];
     } else {
       start = startNode;
     }
+
 
     const output = {};
     output.moves = [];
