@@ -74,7 +74,6 @@ class Cortex {
   }
 
   initialize() {
-    //
     return new Promise((resolve) => {
       this.ready.then(() => {
         this.authorize().then(() => {
@@ -155,7 +154,6 @@ class Cortex {
               resolve();
             });
         });
-      // resolve();
     });
   }
 
@@ -204,9 +202,8 @@ class Cortex {
   }
 
   loadProfile(profileName) {
-    // TODO TEST
     // load a profile to use with the emotiv device
-    // if no profileName arg given, calls selectProfile TODO
+    // if no profileName arg given, calls selectProfile
     // if any profile is currently loaded, it is unloaded first
     return new Promise(() => {
       const paramsUnload = {

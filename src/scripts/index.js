@@ -109,8 +109,6 @@ $(document).keypress((e) => {
 });
 
 
-
-
 // all functionality of choosing modes, entering/checking ids occurs here
 // first point of user interaction
 function mainMenu() {
@@ -193,7 +191,6 @@ function sessionCreateNoGuide() {
 function initSessionEnter(template) {
   $('#menu').hide();
   $('#mainInterface').show();
-
   console.log('initializing "ENTER" session');
 
   grid = new Grid(s, {
@@ -203,6 +200,7 @@ function initSessionEnter(template) {
     xpoints,
     ypoints,
   });
+
   correctPwd = template[0];
 
   grid.setup();

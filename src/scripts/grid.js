@@ -53,7 +53,6 @@ export default class Grid {
       this.ypoints = YPOINTS;
     }
 
-
     if (this.options.template) {
       this.template = this.options.template;
       this.start = this.template[0].start;
@@ -70,13 +69,11 @@ export default class Grid {
     this.centerX    = this.width / 2;
     this.centerY    = this.height / 2;
 
-
     // initialize svg objects
     this.s          = null;
     this.pathString = '';
     this.path       = null;
     this.circle     = null;
-
 
     // initialize grid objects
     this.nodes        = [];
@@ -84,7 +81,6 @@ export default class Grid {
     this.moves        = [];
     this.currentNode  = this.start;
     this.guideVisible = false;
-
 
     this.ignoringInput = true;
   }
@@ -157,12 +153,10 @@ export default class Grid {
   move(dir) {
     let newNode;
 
-    // TODO: this could be a method
     if (dir === 'up')    { newNode = [this.currentNode[0], this.currentNode[1] - 1]; }
     if (dir === 'down')  { newNode = [this.currentNode[0], this.currentNode[1] + 1]; }
     if (dir === 'left')  { newNode = [this.currentNode[0] - 1, this.currentNode[1]]; }
     if (dir === 'right') { newNode = [this.currentNode[0] + 1, this.currentNode[1]]; }
-
 
     if (this.isValidNode(newNode[0], newNode[1], this.visitedNodes) && !this.ignoringInput) {
       const newNodePx = this.getNodePx(newNode[0], newNode[1]);
@@ -175,7 +169,6 @@ export default class Grid {
       this.path.animate({ d: this.pathString }, this.delay);
     } else {
       console.log('invalid position');
-      // TODO maybe add a visual indicator
     }
   }
 
@@ -211,7 +204,6 @@ export default class Grid {
     let newNode  = startNode;
     let lastNode = startNode;
 
-    // TODO: make function
     moves.forEach((move) => {
       if (move === 'up')    { newNode = [lastNode[0], lastNode[1] - 1]; }
       if (move === 'down')  { newNode = [lastNode[0], lastNode[1] + 1]; }
@@ -248,7 +240,6 @@ export default class Grid {
       start = startNode;
     }
 
-
     const output = {};
     output.moves = [];
     output.start = start;
@@ -272,7 +263,6 @@ export default class Grid {
     let currentNode = [...start];
     visited.push(currentNode);
     matrix[currentNode[0]][currentNode[1]] = 1;
-
 
     let i = 0;
     while (i < pathLength) {
