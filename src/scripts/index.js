@@ -109,27 +109,6 @@ $(document).keypress((e) => {
 });
 
 
-// check the input password against the database response
-function checkPassword(password, input) {
-  if (password.length !== input.length) { return false; }
-
-  for (let i = 0; i < password.length; i++) {
-    if (password[i] !== input[i]) { return false; }
-  }
-
-  if (createMode) {
-    if (!grid.guideVisible) {
-      successCount++;
-      if (successCount >= 2) {
-        endSession();
-      }
-    }
-  } else { // enter mode
-    endSession();
-  }
-
-  return true;
-}
 
 
 // all functionality of choosing modes, entering/checking ids occurs here
@@ -213,4 +192,33 @@ function endSession() {
   }
 
   grid.ignoringInput = true;
+}
+
+// check the input password against the database response
+function checkPassword(password, input) {
+  if (password.length !== input.length) { return false; }
+
+  for (let i = 0; i < password.length; i++) {
+    if (password[i] !== input[i]) { return false; }
+  }
+
+  if (!createMode) {
+    return true;
+  }
+
+  if (grid.guideVisible) {
+    session.completedGuide++;
+  } else {
+    session.completedNoGuide++;
+  }
+
+  if (session.completedGuide < session.nTrialsGuide) {
+    sessionCreateGuide();
+  } else if (session.completedNoGuide < session.nTrialsNoGuide) {
+    sessionCreateNoGuide();
+  } else {
+    endSession();
+  }
+
+  return true;
 }
