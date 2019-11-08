@@ -17,3 +17,9 @@ body {
     /* width: 900px; */
     /* height: 900px; */
 }
+
+#mainInterface input {
+  font-size: 16pt;
+  height: 60px;
+  width: 80px;
+}
