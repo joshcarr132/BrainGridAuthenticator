@@ -154,23 +154,40 @@ function mainMenu() {
 }
 
 
-function initSessionCreate() {
+function initSessionCreate(nTrialsGuide = 2, nTrialsNoGuide = 2) {
   $('#menu').hide();
   $('#mainInterface').show();
-
-  successCount = 0;
   console.log('initializing "CREATE" session');
 
-  grid = new Grid(s, {
-    height:   600,
-    width:    600,
-    xpoints:  6,
-    ypoints : 6,
-  });
-  correctPwd = grid.template;
+  session = {
+    grid: new Grid(s, {
+      height,
+      width,
+      xpoints,
+      ypoints,
+    }),
+    nTrialsGuide,
+    nTrialsNoGuide,
+    completedGuide: 0,
+    completedNoGuide: 0,
+  };
 
+  correctPwd = session.grid.template;
+  grid = session.grid;
+
+  sessionCreateGuide();
+}
+
+function sessionCreateGuide() {
   grid.setup();
+  grid.redraw(true);
   grid.showGuide();
+}
+
+function sessionCreateNoGuide() {
+  grid.setup();
+  grid.redraw(true);
+  grid.hideGuide();
 }
 
 function initSessionEnter(template) {
@@ -179,7 +196,13 @@ function initSessionEnter(template) {
 
   console.log('initializing "ENTER" session');
 
-  grid = new Grid(s, { template });
+  grid = new Grid(s, {
+    template,
+    height,
+    width,
+    xpoints,
+    ypoints,
+  });
   correctPwd = template[0];
 
   grid.setup();
