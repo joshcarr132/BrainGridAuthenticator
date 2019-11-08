@@ -123,6 +123,8 @@ export default class Grid {
       this.moves        = [];
       this.currentNode  = this.start;
       this.visitedNodes.push(this.currentNode);
+      if (this.guidePath) { this.guidePath.remove(); }
+      if (this.guideCircle) { this.guideCircle.remove(); }
 
       if (this.path)   { this.path.remove(); }
       if (this.circle) { this.circle.remove(); }
