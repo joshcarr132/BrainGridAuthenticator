@@ -224,12 +224,33 @@ function endSession() {
 
 // check the input password against the database response
 function checkPassword(password, input) {
-  if (password.length !== input.length) { return false; }
+  if (password.length !== input.length) {
+    grid.lineColour = 'red';
+    grid.redraw();
 
-  for (let i = 0; i < password.length; i++) {
-    if (password[i] !== input[i]) { return false; }
+    setTimeout(() => {
+      grid.lineColour = 'coral';
+      grid.redraw();
+
+      return false;
+    }, 500);
   }
 
+  for (let i = 0; i < password.length; i++) {
+    if (password[i] !== input[i]) {
+      grid.lineColour = 'red';
+      grid.redraw();
+
+      setTimeout(() => {
+        grid.lineColour = 'coral';
+        grid.redraw();
+
+        return false;
+      }, 500);
+    }
+  }
+
+  // at this point we know the password is correct
   if (!createMode) {
     return true;
   }
@@ -240,13 +261,19 @@ function checkPassword(password, input) {
     session.completedNoGuide++;
   }
 
-  if (session.completedGuide < session.nTrialsGuide) {
-    sessionCreateGuide();
-  } else if (session.completedNoGuide < session.nTrialsNoGuide) {
-    sessionCreateNoGuide();
-  } else {
-    endSession();
-  }
+  grid.lineColour = 'blue';
+  grid.redraw();
+
+  setTimeout(() => {
+    grid.lineColour = 'coral';
+    if (session.completedGuide < session.nTrialsGuide) {
+      sessionCreateGuide();
+    } else if (session.completedNoGuide < session.nTrialsNoGuide) {
+      sessionCreateNoGuide();
+    } else {
+      endSession();
+    }
+  }, 1000);
 
   return true;
 }

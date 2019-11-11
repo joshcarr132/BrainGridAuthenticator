@@ -174,6 +174,12 @@ export default class Grid {
       this.circle.animate({ cx: newNodePx[0], cy: newNodePx[1] }, this.delay);
       this.path.animate({ d: this.pathString }, this.delay);
     } else {
+      this.lineColour = 'orange';
+      this.redraw();
+      setTimeout(() => {
+        this.lineColour = 'coral';
+        this.redraw();
+      }, 100);
       console.log('invalid position');
     }
   }
