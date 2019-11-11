@@ -256,6 +256,7 @@ export default class Grid {
     const deadEnds = [];
     const matrix   = [];
 
+    // create matrix of zeroes
     for (let i = 0; i < this.xpoints; i++) {
       matrix[i] = new Array(this.ypoints).fill(0);
     }
@@ -264,10 +265,11 @@ export default class Grid {
     visited.push(currentNode);
     matrix[currentNode[0]][currentNode[1]] = 1;
 
-    let i = 0;
-    while (i < pathLength) {
+    let i = 2;
+    while (i < pathLength + 2) {
       const validOptions = [];
 
+      // filter only valid options
       for (const opt of Object.keys(moveOptions)) {
         const option = moveOptions[opt];
         const candidateX = currentNode[0] + option[0];
@@ -278,6 +280,7 @@ export default class Grid {
         }
       }
 
+      // choose a valid option at random
       if (validOptions.length > 0) {
         const choice = Math.floor(Math.random() * validOptions.length);
         const move = validOptions[choice][0];
@@ -285,19 +288,19 @@ export default class Grid {
         currentNode = [currentNode[0] + move[0], currentNode[1] + move[1]];
         visited.push(currentNode);
         output.moves.push(validOptions[choice][1]);
-        matrix[currentNode[0]][currentNode[1]] = 1;
+        matrix[currentNode[0]][currentNode[1]] = i;
         i++;
       } else {
         deadEnds.push(currentNode);
         matrix[currentNode[0]][currentNode[1]] = 0;
-        currentNode = visited.pop();
+        visited.pop();
+        currentNode = visited[visited.length - 1];
         output.moves.pop();
         i--;
       }
-      if (verbose) {
-        console.log(matrix);
-      }
+
     }
+
     output.end = currentNode;
     return output;
   }
