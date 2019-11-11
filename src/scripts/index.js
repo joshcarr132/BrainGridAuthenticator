@@ -17,6 +17,7 @@ const xpoints = 7;
 const ypoints = 7;
 const width = 600;
 const height = 600;
+const pathLength = 12;
 
 // SETUP
 $(document).ready(() => {
@@ -163,6 +164,7 @@ function initSessionCreate(nTrialsGuide = 2, nTrialsNoGuide = 2) {
       width,
       xpoints,
       ypoints,
+      pathLength,
     }),
     nTrialsGuide,
     nTrialsNoGuide,
@@ -199,6 +201,7 @@ function initSessionEnter(template) {
     width,
     xpoints,
     ypoints,
+    pathLength,
   });
 
   correctPwd = template[0];

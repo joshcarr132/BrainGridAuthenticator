@@ -53,12 +53,18 @@ export default class Grid {
       this.ypoints = YPOINTS;
     }
 
+    if (this.options.pathLength) {
+      this.pathLength = this.options.pathLength;
+    } else {
+      this.pathLength = 8;
+    }
+
     if (this.options.template) {
       this.template = this.options.template;
       this.start = this.template[0].start;
     } else {
       this.createMode = true;
-      this.assignNewTemplate(this.createRandomPath('center'));
+      this.assignNewTemplate(this.createRandomPath('center', this.pathLength, true));
     }
 
     // calculate geometry
