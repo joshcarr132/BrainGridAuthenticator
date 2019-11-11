@@ -27,7 +27,7 @@ $(document).ready(() => {
   $('#submitButton').click(() => { checkPassword(); });
 
   s = Snap('#svg');
-  mainMenu();
+  mainMenu(true);
 });
 
 // HANDLE INPUTS
@@ -112,7 +112,11 @@ $(document).keypress((e) => {
 
 // all functionality of choosing modes, entering/checking ids occurs here
 // first point of user interaction
-function mainMenu() {
+function mainMenu(skip = false) {
+  if (skip) {
+    initSessionCreate();
+    return;
+  }
   id = 0;
   let mode;
   $('#mainInterface').hide();
