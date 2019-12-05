@@ -302,9 +302,9 @@ class Cortex {
       const command = block.commands[key];
 
       if (!highestPower) {
-        highestPower = command;
-      } else if (command.power > highestPower.power) {
-        highestPower = command;
+        highestPower = { key, command };
+      } else if (command.power > highestPower.command.power) {
+        highestPower = { key, command };
       }
 
       block.output = highestPower;
