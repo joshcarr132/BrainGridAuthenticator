@@ -6,7 +6,7 @@
                If it is not passed to constructor, it must be passed to
                Cortex.authorize()
     options => JSON object with options
-      verbose: true => log debugging info to console
+    verbose: true => log debugging info to console
 
   usage:
     Promises are used extensively to handle asynchronous API calls. Each API
@@ -40,6 +40,8 @@ class Cortex {
     this.ws.addEventListener('close', () => {
       this.log('Socket closed');
     });
+
+    this.ws.setMaxListeners(0);
 
     this.ready = new Promise((resolve) => {
       this.log('initialized Cortex object');
