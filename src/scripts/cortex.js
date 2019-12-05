@@ -142,19 +142,16 @@ class Cortex {
   closeSession() {
     this.log('closing session');
     return new Promise((resolve) => {
-      this.unsubscribe()
-        .then(() => {
-          const params = {
-            cortexToken: this.authToken,
-            session: this.sessionId,
-            status: 'close',
-          };
+      const params = {
+        cortexToken: this.authToken,
+        session: this.sessionId,
+        status: 'close',
+      };
 
-          this.call('updateSession', params)
-            .then(() => {
-              this.log('session closed');
-              resolve();
-            });
+      this.call('updateSession', params)
+        .then(() => {
+          this.log('session closed');
+          resolve();
         });
     });
   }
