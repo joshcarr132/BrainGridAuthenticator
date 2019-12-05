@@ -191,7 +191,7 @@ class Cortex {
 
       this.call('unsubscribe', params)
         .then((result) => {
-          if (result.failure.length === 0) {
+          if (!result.failure) {
             this.streams = [];
             this.log(`unsubscribed from ${JSON.stringify(result.success)}`);
             resolve(result);
@@ -247,7 +247,7 @@ class Cortex {
     }
   }
 
-  commandBlock(blockId = 1, blockTime = 3000, threshold = 30) {
+  commandBlock(blockId = 1, blockTime = 2000, threshold = 5) {
     return new Promise((resolve, reject) => {
       const blockData = {
         output: '',
@@ -278,6 +278,7 @@ class Cortex {
                 }
 
                 if (blockData.commands[act].power >= threshold) {
+                  this.log('session ended due to threshold');
                   this.closeSession();
                   resolve(this.processBlock(blockData));
                 }
@@ -285,6 +286,7 @@ class Cortex {
             });
 
             setTimeout(() => {
+              this.log('session ended due to timeout');
               this.closeSession();
               resolve(this.processBlock(blockData));
             }, blockTime);
@@ -308,9 +310,10 @@ class Cortex {
       }
 
       block.output = highestPower;
-
-      return block;
     });
+
+    this.log(`command: ${JSON.stringify(block.output)}`);
+    return block;
   }
 }
 
