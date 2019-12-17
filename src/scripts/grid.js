@@ -31,8 +31,10 @@ export default class Grid {
 
     if (this.options.lineColour) {
       this.lineColour = this.options.lineColour;
+      this.defaultColour = this.options.lineColour;
     } else {
       this.lineColour = LINECOLOUR;
+      this.defaultColour = LINECOLOUR;
     }
 
     if (this.options.delay) {
@@ -404,7 +406,7 @@ export default class Grid {
     this.ignoringInput = true;
 
     window.setTimeout(() => {
-      this.changeColour(LINECOLOUR);
+      this.changeColour(this.defaultColour);
     }, time);
   }
 
@@ -413,7 +415,7 @@ export default class Grid {
     this.ignoringInput = true;
 
     window.setTimeout(() => {
-      this.changeColour(LINECOLOUR);
+      this.changeColour(this.defaultColour);
     }, time);
   }
 }

@@ -61,6 +61,7 @@ $(document).keypress((e) => {
     case 98: // b
       grid.ignoringInput = true;
       socket.emit('initCmdBlock');
+      grid.changeColour('blue');
 
       break;
 
@@ -153,6 +154,15 @@ function mainMenu() {
         console.log('no command detected');
         break;
     }
+  });
+
+  socket.on('ctxReady', () => {
+    grid.ignoringInput = false;
+
+    grid.changeColour('blue');
+    window.setTimeout(() => {
+      grid.changeColour(grid.defaultColour);
+    }, 500);
   });
 }
 

@@ -63,7 +63,9 @@ io.on('connection', (socket) => {
 
     ctxClient.ready.then(() => {
       ctxClient.authorize().then(() => {
-        ctxClient.getHeadsetId();
+        ctxClient.getHeadsetId().then(() => {
+          socket.emit('ctxReady');
+        });
       });
     });
 
