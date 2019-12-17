@@ -393,5 +393,12 @@ export default class Grid {
     }, time);
   }
 
-  feedbackFailure() {}
+  feedbackFailure(time = 4000) {
+    this.changeColour('red');
+    this.ignoringInput = true;
+
+    window.setTimeout(() => {
+      this.changeColour(LINECOLOUR);
+    }, time);
+  }
 }

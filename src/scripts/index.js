@@ -221,12 +221,20 @@ function endSession() {
 }
 
 // check the input password against the database response
-function checkPassword(password, input) {
-  if (password.length !== input.length) { return false; }
+function checkPassword(password, input, delay = 2000) {
+  if (password.length !== input.length) {
+    grid.feedbackFailure(delay);
+    return false;
+  }
 
   for (let i = 0; i < password.length; i++) {
-    if (password[i] !== input[i]) { return false; }
+    if (password[i] !== input[i]) {
+      grid.feedbackFailure(delay);
+      return false;
+    }
   }
+
+  grid.feedbackSuccess(delay);
 
   if (!createMode) {
     return true;
@@ -239,11 +247,11 @@ function checkPassword(password, input) {
   }
 
   if (session.completedGuide < session.nTrialsGuide) {
-    sessionCreateGuide();
+    window.setTimeout(sessionCreateGuide, delay);
   } else if (session.completedNoGuide < session.nTrialsNoGuide) {
-    sessionCreateNoGuide();
+    window.setTimeout(sessionCreateNoGuide(), delay);
   } else {
-    endSession();
+    window.setTimeout(endSession, delay);
   }
 
   return true;
