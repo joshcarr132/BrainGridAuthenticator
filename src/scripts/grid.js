@@ -186,7 +186,11 @@ export default class Grid {
 
 
   undo() {
-    if (this.visitedNodes.length <= 1) { console.log('no moves to undo'); }
+    if (this.visitedNodes.length <= 1) {
+      console.log('no moves to undo');
+      return;
+    }
+
     if (!this.ignoringInput) {
       this.currentNode = this.visitedNodes.pop();
       this.moves.pop();

@@ -63,27 +63,6 @@ $(document).keypress((e) => {
       grid.ignoringInput = true;
       socket.emit('initCmdBlock');
 
-      socket.on('command', (command) => {
-        console.log(`OUTPUT COMMAND: ${command}`);
-        grid.ignoringInput = false;
-        switch (command) {
-          case 'left':
-            grid.moveLeft();
-            break;
-          case 'push':
-            grid.moveUp();
-            break;
-          case 'right':
-            grid.moveRight();
-            break;
-          case 'drop':
-            grid.moveDown();
-            break;
-          default:
-            console.log('no command detected');
-            break;
-        }
-      });
       break;
 
     case 13: // enter
@@ -152,6 +131,32 @@ function mainMenu(skip = false) {
       } else {
         initSessionEnter(res);
       }
+    }
+  });
+  socket.on('command', (command) => {
+    console.log(`OUTPUT COMMAND: ${command}`);
+    grid.ignoringInput = false;
+
+    switch (command.output.key) {
+      case 'left':
+        grid.move('left');
+        break;
+      case 'push':
+        grid.move('up');
+        break;
+      case 'right':
+        grid.move('right');
+        break;
+      case 'drop':
+        grid.move('down');
+        break;
+      case 'neutral':
+        grid.move('up');
+        console.log('undefined command');
+        break;
+      default:
+        console.log('no command detected');
+        break;
     }
   });
 }
