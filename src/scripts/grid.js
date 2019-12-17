@@ -110,7 +110,6 @@ export default class Grid {
   redraw(reset = false) {
     // redraw all dynamic elements (circle, lines)
     // if reset = true, will reset everything to starting position
-
     if (this.path) { this.path.remove(); }
     if (this.circle) { this.circle.remove(); }
 
@@ -151,12 +150,7 @@ export default class Grid {
 
 
   move(dir) {
-    let newNode;
-
-    if (dir === 'up')    { newNode = [this.currentNode[0], this.currentNode[1] - 1]; }
-    if (dir === 'down')  { newNode = [this.currentNode[0], this.currentNode[1] + 1]; }
-    if (dir === 'left')  { newNode = [this.currentNode[0] - 1, this.currentNode[1]]; }
-    if (dir === 'right') { newNode = [this.currentNode[0] + 1, this.currentNode[1]]; }
+    const newNode = this.getMoveCoords(dir, this.currentNode);
 
     if (this.isValidNode(newNode[0], newNode[1], this.visitedNodes) && !this.ignoringInput) {
       const newNodePx = this.getNodePx(newNode[0], newNode[1]);
@@ -198,26 +192,46 @@ export default class Grid {
   }
 
 
+  getMoveCoords(dir, node) {
+    let newNode = [];
+
+    switch (dir) {
+      case 'up':
+        newNode = [node[0], node[1] - 1];
+        break;
+
+      case 'down':
+        newNode = [node[0], node[1] + 1];
+        break;
+
+      case 'left':
+        newNode = [node[0] - 1, node[1]];
+        break;
+
+      case 'right':
+        newNode = [node[0] + 1, node[1]];
+        break;
+
+      default:
+        this.log('not a valid direction');
+        break;
+    }
+
+    return newNode;
+  }
+
+
   getTemplate(startNode, moves) {
     // given a start node and a set of moves, return string of pixel locations
     // of path and end node
-
     const cx = this.getNodePx(...startNode);
-
     let s        = `M${cx[0]},${cx[1]}`;
-    let newNode  = startNode;
     let lastNode = startNode;
 
     moves.forEach((move) => {
-      if (move === 'up')    { newNode = [lastNode[0], lastNode[1] - 1]; }
-      if (move === 'down')  { newNode = [lastNode[0], lastNode[1] + 1]; }
-      if (move === 'left')  { newNode = [lastNode[0] - 1, lastNode[1]]; }
-      if (move === 'right') { newNode = [lastNode[0] + 1, lastNode[1]]; }
-
+      const newNode = this.getMoveCoords(move, lastNode);
       const newNodePx = this.getNodePx(...newNode);
-
       s += `L${newNodePx[0]},${newNodePx[1]}`;
-
       lastNode = newNode;
     });
 
@@ -248,7 +262,6 @@ export default class Grid {
     output.moves = [];
     output.start = start;
 
-    // TODO: need a function for this!
     const moveOptions = {
       up   : [0, -1],
       down : [0, 1],
@@ -364,4 +377,21 @@ export default class Grid {
       this.showGuide();
     }
   }
+
+  changeColour(newColour) {
+    this.lineColour = newColour;
+    this.redraw();
+  }
+
+
+  feedbackSuccess(time = 4000) {
+    this.changeColour('green');
+    this.ignoringInput = true;
+
+    window.setTimeout(() => {
+      this.changeColour(LINECOLOUR);
+    }, time);
+  }
+
+  feedbackFailure() {}
 }
