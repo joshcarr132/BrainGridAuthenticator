@@ -186,6 +186,7 @@ function sessionCreateGuide() {
   grid.setup();
   grid.redraw(true);
   grid.showGuide();
+  displayMessage('Follow the guide to enter your password.');
 }
 
 function sessionCreateNoGuide() {
@@ -276,4 +277,8 @@ function checkPassword(password, input) {
   }, 1000);
 
   return true;
+}
+
+function displayMessage(message) {
+  $('#messageBox span').text(message);
 }
