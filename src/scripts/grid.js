@@ -418,4 +418,8 @@ export default class Grid {
       this.changeColour(this.defaultColour);
     }, time);
   }
+
+  displayMessage(messageBox, message) {
+    messageBox.text(message);
+  }
 }

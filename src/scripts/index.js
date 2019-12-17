@@ -11,6 +11,7 @@ let correctPwd;
 let createMode;
 let id;
 let session;
+let messageBox;
 
 // grid dimensions
 const xpoints = 7;
@@ -25,6 +26,7 @@ $(document).ready(() => {
   $('#resetButton').click(() => { grid.redraw(true); });
   $('#submitButton').click(() => { checkPassword(); });
 
+  messageBox = $('#messageBox span');
   s = Snap('#svg');
   mainMenu();
 });
@@ -129,9 +131,11 @@ function mainMenu() {
       }
     }
   });
+
   socket.on('command', (command) => {
     console.log(`OUTPUT COMMAND: ${command}`);
     grid.ignoringInput = false;
+    grid.changeColour(grid.defaultColour);
 
     switch (command.output.key) {
       case 'left':
@@ -187,6 +191,9 @@ function initSessionCreate(nTrialsGuide = 2, nTrialsNoGuide = 2) {
 
   correctPwd = session.grid.template;
   grid = session.grid;
+  grid.ignoringInput = true;
+
+  grid.displayMessage(messageBox, 'Follow the guide to enter your password');
 
   sessionCreateGuide();
 }
@@ -232,6 +239,7 @@ function endSession() {
 
 // check the input password against the database response
 function checkPassword(password, input, delay = 2000) {
+  // TODO this function does too much
   if (password.length !== input.length) {
     grid.feedbackFailure(delay);
     return false;
@@ -259,6 +267,7 @@ function checkPassword(password, input, delay = 2000) {
   if (session.completedGuide < session.nTrialsGuide) {
     window.setTimeout(sessionCreateGuide, delay);
   } else if (session.completedNoGuide < session.nTrialsNoGuide) {
+    grid.displayMessage(messageBox, 'Now try to enter your password without a guide');
     window.setTimeout(sessionCreateNoGuide(), delay);
   } else {
     window.setTimeout(endSession, delay);
