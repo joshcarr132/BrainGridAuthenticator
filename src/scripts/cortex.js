@@ -25,6 +25,11 @@ const CORTEX_URL = 'wss://localhost:6868';
 const WebSocket = require('ws');
 const chalk = require('chalk');
 
+const fs = require('fs');
+const util = require('util');
+const path = require('path');
+
+const logFile = fs.createWriteStream(path.join(__dirname, '/../../debug.log'), { flags: 'w' });
 
 class Cortex {
   constructor(auth, options = {}) {
@@ -234,6 +239,7 @@ class Cortex {
     if (this.options.verbose === true) {
       console.log(`${chalk.cyan('[ctx]')} ${msg}`);
       console.log('-----');
+      logFile.write(`${util.format(msg)}\n`);
     }
   }
 

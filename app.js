@@ -1,3 +1,6 @@
+const fs = require('fs');
+const util = require('util');
+
 const verbose = true; // set true to have this module output debugging messages to the console
 const chalk = require('chalk'); // for colorizing console output
 
@@ -23,6 +26,8 @@ let collection;
 const auth = require('./src/scripts/auth.js');
 const Cortex = require('./src/scripts/cortex.js');
 
+// debug log
+const logFile = fs.createWriteStream(path.join(__dirname, '/debug.log'), { flags: 'w' });
 
 // setup paths for express
 app.use('/', express.static(path.join(__dirname, '/src')));
@@ -104,5 +109,7 @@ function log(...msg) {
   if (verbose) {
     console.log(`${chalk.green('[app]')} ${msg}`);
     console.log('-----');
+    // logFile.write(util.format(msg) + '\n');
+    logFile.write(`${util.format(msg)}\n`);
   }
 }
