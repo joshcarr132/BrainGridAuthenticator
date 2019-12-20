@@ -141,7 +141,7 @@ function mainMenu() {
       case 'left':
         grid.move('left');
         break;
-      case 'push':
+      case 'lift':
         grid.move('up');
         break;
       case 'right':
@@ -151,7 +151,6 @@ function mainMenu() {
         grid.move('down');
         break;
       case 'neutral':
-        // grid.move('up');
         console.log('no command detected');
         break;
       default:
