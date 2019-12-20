@@ -253,8 +253,9 @@ class Cortex {
     }
   }
 
-  commandBlock(blockId = 1, blockTime = 2000, threshold = 5) {
+  commandBlock(blockId = 1, blockTime = 4000, threshold = 1) {
     return new Promise((resolve, reject) => {
+      let endTimeout;
       const blockData = {
         output: '',
         blockId,
@@ -267,6 +268,12 @@ class Cortex {
             if (subs.failure.length > 0) {
               reject(new Error('failed to subscribe'));
             }
+
+            endTimeout = setTimeout(() => {
+              this.log('session ended due to timeout');
+              this.closeSession();
+              resolve(this.processBlock(blockData));
+            }, blockTime);
 
             this.ws.on('message', (msg) => {
               msg = JSON.parse(msg);
@@ -283,19 +290,18 @@ class Cortex {
                   blockData.commands[act].power += pow;
                 }
 
-                if (blockData.commands[act].power >= threshold) {
-                  this.log('session ended due to threshold');
-                  this.closeSession();
-                  resolve(this.processBlock(blockData));
-                }
+                // end block early if total power of a command > threshold
+                // DOESN'T WORK; breaks application; clearTimeout seems to only work
+                // the first time
+                // if (blockData.commands[act].power >= threshold) {
+                //   this.log(util.inspect(endTimeout, { depth: null }));
+                //   clearTimeout(endTimeout);
+                //   this.log('session ended due to threshold');
+                //   this.closeSession();
+                //   resolve(this.processBlock(blockData));
+                // }
               }
             });
-
-            setTimeout(() => {
-              this.log('session ended due to timeout');
-              this.closeSession();
-              resolve(this.processBlock(blockData));
-            }, blockTime);
           });
         });
     });
