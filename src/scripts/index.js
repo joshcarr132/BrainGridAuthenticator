@@ -26,7 +26,9 @@ $(document).ready(() => {
   $('#resetButton').click(() => { grid.redraw(true); });
   $('#submitButton').click(() => { checkPassword(); });
 
+  // box to display messages/instructions
   messageBox = $('#messageBox span');
+
   s = Snap('#svg');
   mainMenu();
 });
@@ -64,7 +66,6 @@ $(document).keypress((e) => {
       grid.ignoringInput = true;
       socket.emit('initCmdBlock');
       grid.changeColour('blue');
-
       break;
 
     case 13: // enter
@@ -91,9 +92,9 @@ $(document).keypress((e) => {
 });
 
 
-// all functionality of choosing modes, entering/checking ids occurs here
-// first point of user interaction
 function mainMenu() {
+  // all functionality of choosing modes, entering/checking ids occurs here
+  // first point of user interaction
   id = 0;
   let mode;
   $('#mainInterface').hide();
@@ -159,10 +160,12 @@ function mainMenu() {
     }
   });
 
+
+  // visual indicator when cortex is ready
   socket.on('ctxReady', () => {
     grid.ignoringInput = false;
 
-    grid.changeColour('blue');
+    grid.changeColour('green');
     window.setTimeout(() => {
       grid.changeColour(grid.defaultColour);
     }, 500);
@@ -236,8 +239,8 @@ function endSession() {
   grid.ignoringInput = true;
 }
 
-// check the input password against the database response
 function checkPassword(password, input, delay = 2000) {
+  // check the input password against the database response
   // TODO this function does too much
   if (password.length !== input.length) {
     grid.feedbackFailure(delay);
