@@ -151,8 +151,8 @@ function mainMenu() {
         grid.move('down');
         break;
       case 'neutral':
-        grid.move('up');
-        console.log('undefined command');
+        // grid.move('up');
+        console.log('no command detected');
         break;
       default:
         console.log('no command detected');
