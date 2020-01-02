@@ -43,15 +43,15 @@ class Cortex {
     this.awaitingResponse = 0;
 
     this.ws.addEventListener('close', () => {
-      this.log('Socket closed');
+      log('Socket closed');
     });
 
-    this.ws.setMaxListeners(0);
+    this.ws.setMaxListeners(10);
 
     this.ready = new Promise((resolve) => {
-      this.log('initialized Cortex object');
+      log('initialized Cortex object');
       this.ws.addEventListener('open', resolve);
-    }).then(() => this.log('Socket opened'));
+    }).then(() => log('Socket opened'));
   }
 
   call(method, params = {}) {
@@ -66,13 +66,13 @@ class Cortex {
 
       const message = JSON.stringify(request);
       this.ws.send(message);
-      this.log(`sending[${messageId}: ${method}]`);
+      log(`sending[${messageId}: ${method}]`);
       this.awaitingResponse++;
 
       this.ws.on('message', (data) => {
         const response = JSON.parse(data);
         if (response.id === messageId) {
-          this.log(`received[${messageId}: ${method}]`);
+          log(`received[${messageId}: ${method}]`);
           this.awaitingResponse--;
           resolve(response.result);
         }
@@ -103,7 +103,7 @@ class Cortex {
       this.call('authorize', params)
         .then((result) => {
           this.authToken = result.cortexToken;
-          this.log(`assigning authToken: ${result.cortexToken.slice(0, 20)}...`);
+          log(`assigning authToken: ${result.cortexToken.slice(0, 20)}...`);
           resolve(result.cortexToken);
         });
     });
@@ -115,18 +115,18 @@ class Cortex {
         .then((result) => {
           if (result[0]) { // headset was found
             const hsId = result[0].id;
-            this.log(`assigning headsetId: ${hsId}`);
+            log(`assigning headsetId: ${hsId}`);
             this.headsetId = hsId;
             resolve(hsId);
           } else {
             reject(new Error('no connected headset was found'));
           }
         });
-    }).catch((error) => { this.log(error); });
+    }).catch((error) => { log(error); });
   }
 
   createSession() {
-    this.log('initializing session');
+    log('initializing session');
 
     return new Promise((resolve) => {
       const params = {
@@ -137,7 +137,7 @@ class Cortex {
 
       this.call('createSession', params)
         .then((result) => {
-          this.log(`assigning sessionId: ${result.id}`);
+          log(`assigning sessionId: ${result.id}`);
           this.sessionId = result.id;
           resolve(result);
         });
@@ -145,7 +145,7 @@ class Cortex {
   }
 
   closeSession() {
-    this.log('closing session');
+    log('closing session');
     return new Promise((resolve) => {
       const params = {
         cortexToken: this.authToken,
@@ -155,7 +155,7 @@ class Cortex {
 
       this.call('updateSession', params)
         .then(() => {
-          this.log('session closed');
+          log('session closed');
           resolve();
         });
     });
@@ -174,7 +174,7 @@ class Cortex {
 
       this.call('subscribe', params)
         .then((response) => {
-          this.log(`subscribed to ${streams}`);
+          log(`subscribed to ${streams}`);
 
           response.success.forEach((stream) => {
             this.streams.push(stream.streamName);
@@ -198,7 +198,7 @@ class Cortex {
         .then((result) => {
           if (!result.failure) {
             this.streams = [];
-            this.log(`unsubscribed from ${JSON.stringify(result.success)}`);
+            log(`unsubscribed from ${JSON.stringify(result.success)}`);
             resolve(result);
           }
         });
@@ -235,20 +235,6 @@ class Cortex {
     // with the selected profile name
   }
 
-  log(...msg) {
-    if (this.options.verbose === true) {
-      // const timestamp = new Date().toLocaleTimeString();
-      const timestamp = this.timestamp();
-
-      console.log(`${timestamp}: ${chalk.cyan('[ctx]')} ${msg}`);
-      // console.log('-----');
-      logFile.write(`${timestamp}: [ctx] ${util.format(msg)}\n`);
-    }
-  }
-
-  timestamp(time = new Date()) {
-    return `${time.toLocaleTimeString('en-CA', { hour12: false })}.${time.getMilliseconds()}`;
-  }
 
   closeSocket(force = false) {
     if (force) {
@@ -260,7 +246,7 @@ class Cortex {
     }
   }
 
-  commandBlock(blockId = 1, blockTime = 4000, threshold = 1) {
+  commandBlock(blockId = 1, blockTime = 4000) {
     return new Promise((resolve, reject) => {
       const blockData = {
         output: '',
@@ -275,7 +261,7 @@ class Cortex {
               reject(new Error('failed to subscribe'));
             }
 
-            this.log('initializing command block\n**********START BLOCK');
+            log('initializing command block\n**********START BLOCK');
 
             function commandHandler(msg) {
               msg = JSON.parse(msg);
@@ -284,7 +270,7 @@ class Cortex {
                 const pow = msg.com[1];
 
                 if (pow > 0) {
-                  this.log(`${this.timestamp(new Date(msg.time * 1000))} - [command: ${act}, power: ${pow}]`);
+                  log(`${genTimestamp(new Date(msg.time * 1000))} - [command: ${act}, power: ${pow}]`);
                 }
 
                 if (!blockData.commands.hasOwnProperty(act)) {
@@ -297,11 +283,13 @@ class Cortex {
             }
 
             this.ws.on('message', commandHandler);
+            log('command listener attached');
 
             setTimeout(() => {
-              this.log('session ended due to timeout\n**********END BLOCK');
+              log('session ended due to timeout\n**********END BLOCK');
               this.closeSession();
-              this.ws.removeEventListener('message', handler);
+              this.ws.removeEventListener('message', commandHandler);
+              log('command listener removed');
               resolve(this.processBlock(blockData));
             }, blockTime);
           });
@@ -310,7 +298,7 @@ class Cortex {
   }
 
   processBlock(block) {
-    this.log('command block ended');
+    log('command block ended');
 
     let highestPower;
 
@@ -326,9 +314,19 @@ class Cortex {
       block.output = highestPower;
     });
 
-    this.log(`command: ${JSON.stringify(block.output)}`);
+    log(`command: ${JSON.stringify(block.output)}`);
     return block;
   }
+}
+
+function log(...msg) {
+  const timestamp = genTimestamp();
+  console.log(`${timestamp}: ${chalk.cyan('[ctx]')} ${msg}`);
+  logFile.write(`${timestamp}: [ctx] ${util.format(msg)}\n`);
+}
+
+function genTimestamp(time = new Date()) {
+  return `${time.toLocaleTimeString('en-CA', { hour12: false })}.${time.getMilliseconds()}`;
 }
 
 module.exports = Cortex;

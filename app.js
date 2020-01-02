@@ -76,16 +76,15 @@ io.on('connection', (socket) => {
 
     // initialize command blocks
     socket.on('initCmdBlock', () => {
-      ctxClient.log('ctx: initializing command block');
+      log('ctx: initializing command block');
       ctxClient.commandBlock()
         .then((data) => {
-          // data = JSON.parse(data);
           log(data.keys);
           socket.emit('command', data);
         });
     });
   });
-
+  
   // send successfully created password to database
   socket.on('create_success', (dbEntry) => {
     collection.findOne({ _id: dbEntry._id }).then((doc) => {
