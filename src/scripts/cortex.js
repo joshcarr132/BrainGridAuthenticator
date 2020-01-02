@@ -237,10 +237,17 @@ class Cortex {
 
   log(...msg) {
     if (this.options.verbose === true) {
-      console.log(`${chalk.cyan('[ctx]')} ${msg}`);
-      console.log('-----');
-      logFile.write(`${Date.now()}: [ctx] ${util.format(msg)}\n`);
+      // const timestamp = new Date().toLocaleTimeString();
+      const timestamp = this.timestamp();
+
+      console.log(`${timestamp}: ${chalk.cyan('[ctx]')} ${msg}`);
+      // console.log('-----');
+      logFile.write(`${timestamp}: [ctx] ${util.format(msg)}\n`);
     }
+  }
+
+  timestamp(time = new Date()) {
+    return `${time.toLocaleTimeString('en-CA', { hour12: false })}.${time.getMilliseconds()}`;
   }
 
   closeSocket(force = false) {
@@ -269,6 +276,7 @@ class Cortex {
               reject(new Error('failed to subscribe'));
             }
 
+            this.log('initializing command block\n**********START BLOCK');
 
             this.ws.on('message', (msg) => {
               msg = JSON.parse(msg);
@@ -276,7 +284,9 @@ class Cortex {
                 const act = msg.com[0];
                 const pow = msg.com[1];
 
-                this.log(`${msg.time} - [command: ${act}, power: ${pow}]`);
+                if (pow > 0) {
+                  this.log(`${this.timestamp(new Date(msg.time * 1000))} - [command: ${act}, power: ${pow}]`);
+                }
 
                 if (!blockData.commands.hasOwnProperty(act)) {
                   blockData.commands[act] = { count: 1, power: pow };
@@ -298,8 +308,8 @@ class Cortex {
               }
             });
 
-            endTimeout = setTimeout(() => {
-              this.log('session ended due to timeout');
+            setTimeout(() => {
+              this.log('session ended due to timeout\n**********END BLOCK');
               this.closeSession();
               resolve(this.processBlock(blockData));
             }, blockTime);
