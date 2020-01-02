@@ -262,7 +262,6 @@ class Cortex {
 
   commandBlock(blockId = 1, blockTime = 4000, threshold = 1) {
     return new Promise((resolve, reject) => {
-      // let endTimeout;
       const blockData = {
         output: '',
         blockId,
@@ -278,7 +277,7 @@ class Cortex {
 
             this.log('initializing command block\n**********START BLOCK');
 
-            this.ws.on('message', (msg) => {
+            function commandHandler(msg) {
               msg = JSON.parse(msg);
               if (msg.com) {
                 const act = msg.com[0];
@@ -294,23 +293,15 @@ class Cortex {
                   blockData.commands[act].count++;
                   blockData.commands[act].power += pow;
                 }
-
-                // end block early if total power of a command > threshold
-                // DOESN'T WORK; breaks application; clearTimeout seems to only work
-                // the first time
-                // if (blockData.commands[act].power >= threshold) {
-                //   this.log(util.inspect(endTimeout, { depth: null }));
-                //   clearTimeout(endTimeout);
-                //   this.log('session ended due to threshold');
-                //   this.closeSession();
-                //   resolve(this.processBlock(blockData));
-                // }
               }
-            });
+            }
+
+            this.ws.on('message', commandHandler);
 
             setTimeout(() => {
               this.log('session ended due to timeout\n**********END BLOCK');
               this.closeSession();
+              this.ws.removeEventListener('message', handler);
               resolve(this.processBlock(blockData));
             }, blockTime);
           });
