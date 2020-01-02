@@ -79,12 +79,11 @@ io.on('connection', (socket) => {
       log('ctx: initializing command block');
       ctxClient.commandBlock()
         .then((data) => {
-          log(data.keys);
           socket.emit('command', data);
         });
     });
   });
-  
+
   // send successfully created password to database
   socket.on('create_success', (dbEntry) => {
     collection.findOne({ _id: dbEntry._id }).then((doc) => {

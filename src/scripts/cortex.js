@@ -69,14 +69,19 @@ class Cortex {
       log(`sending[${messageId}: ${method}]`);
       this.awaitingResponse++;
 
-      this.ws.on('message', (data) => {
+      const ctx = this;
+
+      function messageHandler(data) {
         const response = JSON.parse(data);
         if (response.id === messageId) {
           log(`received[${messageId}: ${method}]`);
-          this.awaitingResponse--;
+          ctx.awaitingResponse--;
+          ctx.ws.removeEventListener('message', messageHandler);
           resolve(response.result);
         }
-      });
+      }
+
+      this.ws.on('message', messageHandler);
     });
   }
 
@@ -230,12 +235,6 @@ class Cortex {
     });
   }
 
-  selectProfile() {
-    // list all profile names, allow user to select, then call loadProfile
-    // with the selected profile name
-  }
-
-
   closeSocket(force = false) {
     if (force) {
       this.ws.close();
@@ -246,7 +245,7 @@ class Cortex {
     }
   }
 
-  commandBlock(blockId = 1, blockTime = 4000) {
+  commandBlock(blockId = 1, blockTime = 8000) {
     return new Promise((resolve, reject) => {
       const blockData = {
         output: '',
@@ -290,33 +289,33 @@ class Cortex {
               this.closeSession();
               this.ws.removeEventListener('message', commandHandler);
               log('command listener removed');
-              resolve(this.processBlock(blockData));
+              resolve(processBlock(blockData));
             }, blockTime);
           });
         });
     });
   }
+}
 
-  processBlock(block) {
-    log('command block ended');
+function processBlock(block) {
+  log('command block ended');
 
-    let highestPower;
+  let highestPower;
 
-    Object.keys(block.commands).forEach((key) => {
-      const command = block.commands[key];
+  Object.keys(block.commands).forEach((key) => {
+    const command = block.commands[key];
 
-      if (!highestPower) {
-        highestPower = { key, command };
-      } else if (command.power > highestPower.command.power) {
-        highestPower = { key, command };
-      }
+    if (!highestPower) {
+      highestPower = { key, command };
+    } else if (command.power > highestPower.command.power) {
+      highestPower = { key, command };
+    }
 
-      block.output = highestPower;
-    });
+    block.output = highestPower;
+  });
 
-    log(`command: ${JSON.stringify(block.output)}`);
-    return block;
-  }
+  log(`command: ${JSON.stringify(block.output)}`);
+  return block;
 }
 
 function log(...msg) {
