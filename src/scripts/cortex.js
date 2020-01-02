@@ -255,7 +255,7 @@ class Cortex {
 
   commandBlock(blockId = 1, blockTime = 4000, threshold = 1) {
     return new Promise((resolve, reject) => {
-      let endTimeout;
+      // let endTimeout;
       const blockData = {
         output: '',
         blockId,
@@ -269,11 +269,6 @@ class Cortex {
               reject(new Error('failed to subscribe'));
             }
 
-            endTimeout = setTimeout(() => {
-              this.log('session ended due to timeout');
-              this.closeSession();
-              resolve(this.processBlock(blockData));
-            }, blockTime);
 
             this.ws.on('message', (msg) => {
               msg = JSON.parse(msg);
@@ -281,7 +276,7 @@ class Cortex {
                 const act = msg.com[0];
                 const pow = msg.com[1];
 
-                this.log(`[command: ${act}, power: ${pow}]`);
+                this.log(`${msg.time} - [command: ${act}, power: ${pow}]`);
 
                 if (!blockData.commands.hasOwnProperty(act)) {
                   blockData.commands[act] = { count: 1, power: pow };
@@ -302,6 +297,12 @@ class Cortex {
                 // }
               }
             });
+
+            endTimeout = setTimeout(() => {
+              this.log('session ended due to timeout');
+              this.closeSession();
+              resolve(this.processBlock(blockData));
+            }, blockTime);
           });
         });
     });
