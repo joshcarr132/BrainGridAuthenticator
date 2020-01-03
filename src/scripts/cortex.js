@@ -130,7 +130,7 @@ class Cortex {
     }).catch((error) => { log(error); });
   }
 
-  createSession(auth: this.authToken, status: 'open') {
+  createSession(auth = this.authToken, status = 'open') {
     log('initializing session');
 
     return new Promise((resolve) => {
