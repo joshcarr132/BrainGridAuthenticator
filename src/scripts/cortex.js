@@ -130,12 +130,12 @@ class Cortex {
     }).catch((error) => { log(error); });
   }
 
-  createSession(auth = this.authToken, status = 'open') {
+  createSession(authToken = this.authToken, status = 'open') {
     log('initializing session');
 
     return new Promise((resolve) => {
       const params = {
-        cortexToken,
+        cortexToken = authToken,
         status,
         headset: this.headsetId,
       };
