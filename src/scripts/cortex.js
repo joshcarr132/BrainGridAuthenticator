@@ -135,7 +135,7 @@ class Cortex {
 
     return new Promise((resolve) => {
       const params = {
-        cortexToken = authToken,
+        cortexToken: this.authToken,
         status,
         headset: this.headsetId,
       };
@@ -245,11 +245,10 @@ class Cortex {
     }
   }
 
-  commandBlock(blockId = 1, blockTime = 8000) {
+  commandBlock(blockTime = 8000, socket) {
     return new Promise((resolve, reject) => {
       const blockData = {
         output: '',
-        blockId,
         commands: {},
       };
 
@@ -267,6 +266,8 @@ class Cortex {
               if (msg.com) {
                 const act = msg.com[0];
                 const pow = msg.com[1];
+
+                socket.emit('dir', act);
 
                 if (pow > 0) {
                   log(`${genTimestamp(new Date(msg.time * 1000))} - [command: ${act}, power: ${pow}]`);

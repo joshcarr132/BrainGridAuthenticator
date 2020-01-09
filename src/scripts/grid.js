@@ -138,11 +138,11 @@ export default class Grid {
     const nodePx    = this.getNodePx(...this.start);
 
     // start position
-    // this.snap.circle(nodePx[0], nodePx[1], 10)
-    //   .attr({ fill: this.lineColour, stroke: this.lineColour });
+    this.snap.circle(nodePx[0], nodePx[1], 10)
+      .attr({ fill: this.lineColour, stroke: this.lineColour });
 
-    // this.path = this.snap.path(this.pathString)
-    //   .attr({ stroke: this.lineColour, fill: 'none', strokeWidth: 20 });
+    this.path = this.snap.path(this.pathString)
+      .attr({ stroke: this.lineColour, fill: 'none', strokeWidth: 20 });
 
     // circle position indicator
     const circlePx = this.getNodePx(this.currentNode[0], this.currentNode[1]);
@@ -255,7 +255,7 @@ export default class Grid {
   }
 
 
-  createRandomPath(startNode = 'random', pathLength = 8, verbose = false) {
+  createRandomPath(startNode = 'random', pathLength = 8) {
     // generate a random path of desired length and start point
     // uses dimensions of the current grid i.e., this.xpoints this.ypoints
 
@@ -330,7 +330,6 @@ export default class Grid {
         output.moves.pop();
         i--;
       }
-
     }
 
     output.end = currentNode;
@@ -394,6 +393,40 @@ export default class Grid {
     } else {
       this.showGuide();
     }
+  }
+
+  nudge(dir, offset = this.cellWidth / 2, size = 5) {
+    const currentNodePx = this.getNodePx(...this.currentNode);
+    let indicatorPx;
+
+    if (this.indicatorCircle) { this.indicatorCircle.remove(); }
+
+    switch (dir) {
+      case 'left':
+        indicatorPx = [currentNodePx[0] - offset, currentNodePx[1]];
+        break;
+      case 'lift':
+        indicatorPx = [currentNodePx[0], currentNodePx[1] - offset];
+        break;
+      case 'right':
+        indicatorPx = [currentNodePx[0] + offset, currentNodePx[1]];
+        break;
+      case 'drop':
+        indicatorPx = [currentNodePx[0], currentNodePx[1] + offset];
+        break;
+      case 'neutral':
+        // indicatorPx = [currentNodePx[0] + offset, currentNodePx[1]]; // for debugging
+        break;
+      default:
+        break;
+    }
+
+    this.indicatorCircle = this.snap.circle(...indicatorPx, size)
+      .attr({ fill: this.lineColour });
+
+    setTimeout(() => {
+      this.indicatorCircle.remove();
+    }, 50);
   }
 
   changeColour(newColour) {

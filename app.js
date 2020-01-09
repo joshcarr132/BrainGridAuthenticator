@@ -77,7 +77,7 @@ io.on('connection', (socket) => {
     // initialize command blocks
     socket.on('initCmdBlock', () => {
       log('ctx: initializing command block');
-      ctxClient.commandBlock()
+      ctxClient.commandBlock(8000, socket)
         .then((data) => {
           socket.emit('command', data);
         });
