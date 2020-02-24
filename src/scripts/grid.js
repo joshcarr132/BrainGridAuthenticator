@@ -138,11 +138,11 @@ export default class Grid {
     const nodePx    = this.getNodePx(...this.start);
 
     // start position
-    // this.snap.circle(nodePx[0], nodePx[1], 10)
-    //   .attr({ fill: this.lineColour, stroke: this.lineColour });
+    this.snap.circle(nodePx[0], nodePx[1], 10)
+      .attr({ fill: this.lineColour, stroke: this.lineColour });
 
-    // this.path = this.snap.path(this.pathString)
-    //   .attr({ stroke: this.lineColour, fill: 'none', strokeWidth: 20 });
+    this.path = this.snap.path(this.pathString)
+      .attr({ stroke: this.lineColour, fill: 'none', strokeWidth: 20 });
 
     // circle position indicator
     const circlePx = this.getNodePx(this.currentNode[0], this.currentNode[1]);
@@ -347,9 +347,9 @@ export default class Grid {
     if (x < 0 || x > this.xpoints - 1) { return false; }
     if (y < 0 || y > this.ypoints - 1) { return false; }
 
-    // if (visitedList.some(node => (node[0] === x && node[1] === y))) {
-    //   return false;
-    // }
+    if (visitedList.some(node => (node[0] === x && node[1] === y))) {
+      return false;
+    }
 
     if (deadEnds && deadEnds.some(node => (node[0] === x && node[1] === y))) {
       return false;
@@ -368,15 +368,15 @@ export default class Grid {
 
   showGuide() {
     // render the guide
-    // this.guidePath = this.snap.path(this.getTemplate(this.template.start, this.template.moves).pathString)
-    //   .attr({ fill: 'none', stroke: 'grey', strokeWidth: 25 });
+    this.guidePath = this.snap.path(this.getTemplate(this.template.start, this.template.moves).pathString)
+      .attr({ fill: 'none', stroke: 'grey', strokeWidth: 25 });
 
-    // const guideCirclePx = this.getNodePx(...this.template.end);
+    const guideCirclePx = this.getNodePx(...this.template.end);
 
-    // this.guideCircle = this.snap.circle(guideCirclePx[0], guideCirclePx[1], 15)
-    //   .attr({ fill: 'grey', stroke: 'grey' });
+    this.guideCircle = this.snap.circle(guideCirclePx[0], guideCirclePx[1], 15)
+      .attr({ fill: 'grey', stroke: 'grey' });
 
-    // this.guideVisible = true;
+    this.guideVisible = true;
     this.redraw();
   }
 
@@ -422,5 +422,19 @@ export default class Grid {
 
   displayMessage(messageBox, message) {
     messageBox.text(message);
+  }
+
+  getNextMove() {
+    for (let i = 0; i < this.moves; i++) {
+      if (this.moves[i] !== this.template.moves[i]) {
+        return undefined;
+      }
+    }
+
+    return this.template.moves[this.moves.length];
+  }
+
+  fakeCommandBlock() {
+    this.move(this.getNextMove());
   }
 }

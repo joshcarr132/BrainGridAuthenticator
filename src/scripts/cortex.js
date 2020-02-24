@@ -135,7 +135,7 @@ class Cortex {
 
     return new Promise((resolve) => {
       const params = {
-        cortexToken = authToken,
+        cortexToken: authToken,
         status,
         headset: this.headsetId,
       };

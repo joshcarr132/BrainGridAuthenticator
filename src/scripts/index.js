@@ -88,6 +88,10 @@ $(document).keypress((e) => {
         console.log('cannot show guides in enter mode');
       }
       break;
+
+    case 118: // v
+      grid.fakeCommandBlock();
+      break;
   }
 });
 
