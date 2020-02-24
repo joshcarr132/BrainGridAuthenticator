@@ -164,6 +164,11 @@ function mainMenu() {
     }
   });
 
+  socket.on('dir', (dir) => {
+    console.log(dir);
+    grid.nudge(dir);
+  });
+
 
   // visual indicator when cortex is ready
   socket.on('ctxReady', () => {
