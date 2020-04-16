@@ -13,6 +13,8 @@ let id;
 let session;
 let messageBox;
 
+let blockTime;
+
 // grid dimensions
 const xpoints = 7;
 const ypoints = 7;
@@ -120,6 +122,10 @@ function mainMenu() {
     return false;
   });
 
+  socket.on('blockTime', (time) => {
+    blockTime = time;
+  });
+
   socket.on('db_response', (res) => {
     console.log(res);
     if (createMode) {
@@ -193,6 +199,7 @@ function initSessionCreate(nTrialsGuide = 2, nTrialsNoGuide = 2) {
       width,
       xpoints,
       ypoints,
+      blockTime,
     }),
     nTrialsGuide,
     nTrialsNoGuide,
@@ -232,6 +239,7 @@ function initSessionEnter(template) {
     width,
     xpoints,
     ypoints,
+    blockTime,
   });
 
   correctPwd = template[0];

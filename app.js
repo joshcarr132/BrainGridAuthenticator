@@ -25,6 +25,7 @@ let collection;
 // cortex api
 const auth = require('./src/scripts/auth.js');
 const Cortex = require('./src/scripts/cortex.js');
+const blockTime = 3000;
 
 // debug log
 const logFile = fs.createWriteStream(path.join(__dirname, '/debug.log'), { flags: 'a' });
@@ -54,6 +55,8 @@ io.on('connection', (socket) => {
   });
 
   socket.on('ready', (id) => {
+    socket.emit('blockTime', blockTime);
+
     // query db
     collection.find({ _id: id }).toArray().then((doc) => {
       if (doc.length > 0) {
@@ -77,7 +80,7 @@ io.on('connection', (socket) => {
     // // initialize command blocks
     // socket.on('initCmdBlock', () => {
     //   log('ctx: initializing command block');
-    //   ctxClient.commandBlock()
+    //   ctxClient.commandBlock(blockTime, socket)
     //     .then((data) => {
     //       socket.emit('command', data);
     //     });

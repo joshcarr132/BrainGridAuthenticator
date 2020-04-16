@@ -5,6 +5,7 @@ const LINECOLOUR = 'coral';
 const XPOINTS    = 5;
 const YPOINTS    = 5;
 const DELAY      = 200;
+const BLOCKTIME  = 8000;
 
 
 export default class Grid {
@@ -41,6 +42,12 @@ export default class Grid {
       this.delay = this.options.delay;
     } else {
       this.delay = DELAY;
+    }
+
+    if(this.options.blockTime) {
+      this.blockTime = this.options.blockTime;
+    } else {
+      this.blockTime = BLOCKTIME;
     }
 
     if (this.options.xpoints) {
@@ -228,7 +235,7 @@ export default class Grid {
         break;
 
       default:
-        this.log('not a valid direction');
+        console.log('not a valid direction');
         break;
     }
 
@@ -467,7 +474,31 @@ export default class Grid {
     return this.template.moves[this.moves.length];
   }
 
-  fakeCommandBlock() {
-    this.move(this.getNextMove());
+  getWrongMove() {
+    const options = ['up', 'down', 'left', 'right'];
+    const correctMove = this.getNextMove();
+    options.splice(options.indexOf(correctMove), 1);
+
+    return options[Math.floor(Math.random() * options.length)];
+  }
+
+  fakeCommandBlock(errorRate = 0.1) {
+    let move;
+
+    // this.ignoringInput = true;
+    this.changeColour('blue');
+
+    if (Math.random() >= errorRate) {
+      move = this.getNextMove();
+    } else {
+      move = this.getWrongMove();
+    }
+
+    setTimeout(() => {
+      console.log(`OUTPUT COMMAND: ${move}`);
+      // this.ignoringInput = false;
+      this.changeColour(this.defaultColour);
+      this.move(move);
+    }, this.blockTime);
   }
 }
